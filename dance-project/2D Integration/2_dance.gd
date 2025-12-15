@@ -11,6 +11,9 @@ var processTrack : float = 0
 var totalDuration : float = 1
 var accuracyScore : float = 1
 
+#0: fail, 1: pass, 2: test
+var strcase = 1
+
 #Hip, Chest, Head, LArm, LHand, RArm, RHand, LLeg, LCalf, LFoot, RLeg, RCalf, RFoot
 #Body 0, Tummy 1, Neck 2, LShoulder 3, LElbow 4, RShoulder 5, RElbow 6, LHip 7, LKnee 8, LCalf 9, RHip 10, RKnee 11, RCalf 12 
 var rotationTrack : PackedFloat32Array = [0,0,0,0,0,0,0,0,0,0,0,0,0]
@@ -113,7 +116,21 @@ func NOTprocess() -> void:
 func load_from_file():
 	#waitTime = 0.02
 	#"""
-	var jpgName : String = "../OPimages/" + parseStr.substr(0, strLength - decimal) + str(fileNum) + "_rendered.jpg"
+	var stringcase = ""
+	var jsoncase = ""
+	if strcase == 0:
+		stringcase = "../FAIL_OPimages/"
+		jsoncase = "../FAIL_json/"
+		$UserModel.visible = false
+	elif strcase == 1:
+		stringcase = "../PRE_OPimages/"
+		jsoncase = "../PRE_json/"
+	elif strcase == 2:
+		stringcase = "../OPimages/"
+		jsoncase = "../json/"
+		waitTime = 0.02
+	
+	var jpgName : String = stringcase + parseStr.substr(0, strLength - decimal) + str(fileNum) + "_rendered.jpg"
 	var jpg = FileAccess.open(jpgName, FileAccess.READ_WRITE)
 	if jpg == null:
 		print("Error opening file: ", jpgName)
@@ -132,7 +149,7 @@ func load_from_file():
 		return null
 	#"""
 	
-	var fileName : String = "../json/" + parseStr.substr(0, strLength - decimal) + str(fileNum) + "_keypoints.json"
+	var fileName : String = jsoncase + parseStr.substr(0, strLength - decimal) + str(fileNum) + "_keypoints.json"
 	#var fileName : String = "res://json/" + parseStr.substr(0, strLength - decimal) + str(fileNum) + "_keypoints.json"
 	
 	var file = FileAccess.open(fileName, FileAccess.READ)
@@ -469,7 +486,7 @@ func _pointsToLength(coordinateArray : PackedVector2Array):
 		avgSizeMult += (rlegBaseMult + rlegLengthMult) / 2
 	#RLegBase = TorsoBase * 0.5
 	#RLegHeight = FullLeg(12,13) (move out a little)
-	avgSizeMult *= 0.45
+	avgSizeMult *= 0.45 * 1.1
 	if limbsThatWork == 0:
 		avgSizeMult = 1
 	else:
@@ -479,4 +496,4 @@ func _pointsToLength(coordinateArray : PackedVector2Array):
 	
 	if hipNeckPos != Vector2.ZERO:
 		#print(0.45*hipNeckPos)
-		$Node2D/Skeleton2D/hip.position = Vector2(0.45,0.45)*hipNeckPos + Vector2(-420,35) #- Vector2(120,25)
+		$Node2D/Skeleton2D/hip.position = Vector2(0.45,0.45)*hipNeckPos + Vector2(-425,15) #- Vector2(120,25)

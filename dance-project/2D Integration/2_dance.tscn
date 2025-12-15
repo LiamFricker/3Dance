@@ -102,6 +102,7 @@ scale = Vector2(-0.45, 0.45)
 texture = ExtResource("2_6n4lt")
 
 [node name="UserModel" type="Node2D" parent="."]
+position = Vector2(576, 0)
 scale = Vector2(-1.8, 1.8)
 
 [node name="LHead015" type="Line2D" parent="UserModel"]
@@ -246,7 +247,6 @@ rest = Transform2D(1, 0, 0, 1, 43, -47)
 
 [node name="hand_right" type="Bone2D" parent="Node2D/Skeleton2D/hip/chest/arm_right"]
 position = Vector2(0, 37)
-scale = Vector2(1, 1)
 rest = Transform2D(1, 0, 0, 1, 0, 37)
 auto_calculate_length_and_angle = false
 length = 34.4
@@ -280,7 +280,6 @@ bone_angle = 0.0
 
 [node name="leg_left" type="Bone2D" parent="Node2D/Skeleton2D/hip"]
 position = Vector2(-15, 7)
-scale = Vector2(1, 1)
 rest = Transform2D(1, 0, 0, 1, -15, 7)
 
 [node name="calf_left" type="Bone2D" parent="Node2D/Skeleton2D/hip/leg_left"]
