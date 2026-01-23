@@ -1,13 +1,15 @@
 extends Node2D
 
-var fileNum: int = 0
+var fileNum: int = 0#180
 var decimal: int = 0
-var fileNumRight: int = 0
+var fileNumRight: int = 0#100
 var decimalRight: int = 0
 const strLength: int = 11
 var parseStr : String = "00000000000"
 var outOfFiles : bool = false
 var waitTime : float = 0.033
+
+@export var strictness : float = 1.0
 
 @export var processTrack : float = 0
 @export var totalDuration : float = 72
@@ -109,23 +111,31 @@ func _process(delta) -> void:
 func NOTprocess() -> bool:
 	
 	if not outOfFiles and fileNum < 4000:
-		var temp0 = load_from_file("../Demo1_json/", "Yoga1_")
-		var temp00 = load_from_file("../Bad1_json/", "BadYoga1_", fileNumRight, decimalRight)
+		#var temp0 = load_from_file("../HH3_json/", "HH3_")
+		#var temp00 = load_from_file("../GoodHH1_json/", "GoodHH1_", fileNumRight, decimalRight)
+		#var temp00 = load_from_file("../BadHH3_json/", "BadHH3_", fileNumRight, decimalRight)
+		
+		var temp0 = load_from_file("../Demo3_json/", "Yoga3_")
+		#var temp00 = load_from_file("../Good1_json/", "GoodYoga1_", fileNumRight, decimalRight)
+		var temp00 = load_from_file("../Bad3_json/", "BadYoga3_", fileNumRight, decimalRight)
 		if temp0 and temp00:
 			#$Sprite2D.texture = loadImage("../Demo1_images/", "Yoga1_")
 			#$Sprite2D2.texture = loadImage("../Bad1_images/", "BadYoga1_", fileNumRight, decimalRight)
+			#$Sprite2D2.texture = loadImage("../Good1_images/", "GoodYoga1_", fileNumRight, decimalRight)
+			#$Sprite2D2.texture = loadImage("../Demo1_images/", "Yoga1_", fileNumRight, decimalRight)
+			
 			var temp1 = parseJson(temp0)
 			var temp2 = findPositions(temp1)
 			var temp3 = getCoordinates(temp2)
 			
-			mapCoordinates(temp3)
-			_calculateAngles(temp3)
+			#mapCoordinates(temp3)
+			rotationTrack = _calculateAngles(temp3)
 			
 			var temp01 = parseJson(temp00)
 			var temp02 = findPositions(temp01)
 			var temp03 = getCoordinates(temp02)
-			mapRightCoordinates(temp03)
-			_calculateAngles(temp3, true)
+			#mapRightCoordinates(temp03)
+			rotationTrackRight = _calculateAngles(temp03, true)
 			#$Sprite2D.texture = tempImage
 			fileNum += 1
 			if fileNum >= pow(10, decimal+1):
@@ -330,9 +340,9 @@ func mapRightCoordinates(coordinateArray : PackedVector2Array) -> void:
 	#_pointsToLength(coordinateArray)
 	
 	
-	fileNum += 1
-	if fileNum >= pow(10, decimal+1):
-		decimal += 1
+	#fileNum += 1
+	#if fileNum >= pow(10, decimal+1):
+	#	decimal += 1
 
 func _on_button_button_down() -> void:
 	#$AnimationPlayer.play("BasicMove")
@@ -346,7 +356,8 @@ func _percentDifference(A : float, B : float) -> float:
 	var tempDiff = abs(A - B) / (2*PI)
 	if tempDiff > 0.5:
 		tempDiff = 1.0 - tempDiff
-	return pow(tempDiff, 0.25)
+	#print("A: ",  A, " B: ", B, " tD: ", tempDiff)
+	return pow(tempDiff, strictness)
 
 func _calculateBasicMoveAccuracy(delta) -> void:
 	#Body 0, Tummy 1, Neck 2, LShoulder 3, LElbow 4, RShoulder 5, RElbow 6, LHip 7, LKnee 8, LCalf 9, RHip 10, RKnee 11, RCalf 12 
@@ -376,7 +387,8 @@ func _calculateMoveAccuracy(delta) -> void:
 	var mult = 1 + processTrack/30
 	#Consider a different scale.
 	for i in range(12):
-		tempScore -= _percentDifference(rotationTrack[i], rotationTrackRight[i]) * mult
+		tempScore -= _percentDifference(rotationTrack[i], rotationTrackRight[i]) * mult / 12
+		#print(i)
 	print(tempScore)
 	accuracyScore = accuracyScore + (delta * tempScore) #/ (totalDuration - processTrack)
 	$AccuracyLabel.text = str(100 * accuracyScore / (processTrack))
@@ -391,42 +403,42 @@ func _calculateAngles(coordinateArray : PackedVector2Array, rightAngle = false) 
 	#Tummy 1
 	if coordinateArray[1].length() > invalidPos and coordinateArray[8].length() > invalidPos:
 		rotTrack[1] = coordinateArray[8].angle_to_point(coordinateArray[1]) + PI/2
-		get_node(Skeleton + "chest").rotation = rotTrack[1]
+		#get_node(Skeleton + "chest").rotation = rotTrack[1]
 	
 	#Neck 2
 	if coordinateArray[1].length() > invalidPos and coordinateArray[0].length() > invalidPos:
 		rotTrack[2] = coordinateArray[1].angle_to_point(coordinateArray[0]) + PI/2
-		get_node(Skeleton + "chest/head").rotation = rotTrack[2]
+		#get_node(Skeleton + "chest/head").rotation = rotTrack[2]
 	
 	#LShoulder 3
 	if coordinateArray[2].length() > invalidPos and coordinateArray[3].length() > invalidPos:
 		rotTrack[3] = coordinateArray[2].angle_to_point(coordinateArray[3]) - PI/2
-		get_node(Skeleton + "chest/arm_left").rotation = rotTrack[3]
+		#get_node(Skeleton + "chest/arm_left").rotation = rotTrack[3]
 	
 	#LElbow 4
 	if coordinateArray[4].length() > invalidPos and coordinateArray[3].length() > invalidPos:
 		rotTrack[4] = coordinateArray[3].angle_to_point(coordinateArray[4]) - PI/2
-		get_node(Skeleton + "chest/arm_left/hand_left").rotation = rotTrack[4]
+		#get_node(Skeleton + "chest/arm_left/hand_left").rotation = rotTrack[4]
 		
 	#RShoulder 5
 	if coordinateArray[5].length() > invalidPos and coordinateArray[6].length() > invalidPos:
 		rotTrack[5] = coordinateArray[5].angle_to_point(coordinateArray[6]) - PI/2
-		get_node(Skeleton + "chest/arm_right").rotation = rotTrack[5]
+		#get_node(Skeleton + "chest/arm_right").rotation = rotTrack[5]
 	
 	#RElbow 6
 	if coordinateArray[7].length() > invalidPos and coordinateArray[6].length() > invalidPos:
 		rotTrack[6] = coordinateArray[6].angle_to_point(coordinateArray[7])# - PI/2
-		get_node(Skeleton + "chest/arm_right/hand_right").rotation = rotTrack[6]
+		#get_node(Skeleton + "chest/arm_right/hand_right").rotation = rotTrack[6]
 	
 	#LHip 7
 	if coordinateArray[9].length() > invalidPos and coordinateArray[10].length() > invalidPos:
-		rotationTrack[7] = coordinateArray[9].angle_to_point(coordinateArray[10]) - PI/2	
-		get_node(Skeleton + "leg_left").rotation = rotationTrack[7]
+		rotTrack[7] = coordinateArray[9].angle_to_point(coordinateArray[10]) - PI/2	
+		#get_node(Skeleton + "leg_left").rotation = rotTrack[7]
 	
 	#LKnee 8
 	if coordinateArray[11].length() > invalidPos and coordinateArray[10].length() > invalidPos:
 		rotTrack[8] = coordinateArray[10].angle_to_point(coordinateArray[11]) - PI/2	
-		get_node(Skeleton + "leg_left/calf_left").rotation = rotTrack[8]
+		#get_node(Skeleton + "leg_left/calf_left").rotation = rotTrack[8]
 	
 	#LCalf 9
 	#null
@@ -434,12 +446,12 @@ func _calculateAngles(coordinateArray : PackedVector2Array, rightAngle = false) 
 	#RHip 10
 	if coordinateArray[12].length() > invalidPos and coordinateArray[13].length() > invalidPos:
 		rotTrack[10] = coordinateArray[12].angle_to_point(coordinateArray[13]) - PI/2
-		get_node(Skeleton + "leg_right").rotation = rotTrack[10]
+		#get_node(Skeleton + "leg_right").rotation = rotTrack[10]
 	
 	#RKnee 11
 	if coordinateArray[14].length() > invalidPos and coordinateArray[13].length() > invalidPos:
 		rotTrack[11] = coordinateArray[13].angle_to_point(coordinateArray[14]) - PI/2
-		get_node(Skeleton + "leg_right/calf_right").rotation = rotTrack[11]
+		#get_node(Skeleton + "leg_right/calf_right").rotation = rotTrack[11]
 		
 	#RCalf 12 
 	#null
