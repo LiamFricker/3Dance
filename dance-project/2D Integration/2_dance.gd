@@ -119,8 +119,8 @@ func NOTprocess() -> bool:
 		#var temp00 = load_from_file("../Good1_json/", "GoodYoga1_", fileNumRight, decimalRight)
 		var temp00 = load_from_file("../Bad3_json/", "BadYoga3_", fileNumRight, decimalRight)
 		if temp0 and temp00:
-			#$Sprite2D.texture = loadImage("../Demo1_images/", "Yoga1_")
-			#$Sprite2D2.texture = loadImage("../Bad1_images/", "BadYoga1_", fileNumRight, decimalRight)
+			#$Sprite2D.texture = loadImage("../Demo3_images/", "Yoga3_")
+			#$Sprite2D2.texture = loadImage("../Bad3_images/", "BadYoga3_", fileNumRight, decimalRight)
 			#$Sprite2D2.texture = loadImage("../Good1_images/", "GoodYoga1_", fileNumRight, decimalRight)
 			#$Sprite2D2.texture = loadImage("../Demo1_images/", "Yoga1_", fileNumRight, decimalRight)
 			
