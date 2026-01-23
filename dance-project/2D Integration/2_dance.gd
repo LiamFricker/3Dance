@@ -2,14 +2,16 @@ extends Node2D
 
 var fileNum: int = 0
 var decimal: int = 0
+var fileNumRight: int = 0
+var decimalRight: int = 0
 const strLength: int = 11
 var parseStr : String = "00000000000"
 var outOfFiles : bool = false
-var waitTime : float = 0.1
+var waitTime : float = 0.033
 
-var processTrack : float = 0
-var totalDuration : float = 1
-var accuracyScore : float = 1
+@export var processTrack : float = 0
+@export var totalDuration : float = 72
+@export var accuracyScore : float = 0.0
 
 #0: fail, 1: pass, 2: test
 var strcase = 1
@@ -17,6 +19,7 @@ var strcase = 1
 #Hip, Chest, Head, LArm, LHand, RArm, RHand, LLeg, LCalf, LFoot, RLeg, RCalf, RFoot
 #Body 0, Tummy 1, Neck 2, LShoulder 3, LElbow 4, RShoulder 5, RElbow 6, LHip 7, LKnee 8, LCalf 9, RHip 10, RKnee 11, RCalf 12 
 var rotationTrack : PackedFloat32Array = [0,0,0,0,0,0,0,0,0,0,0,0,0]
+var rotationTrackRight : PackedFloat32Array = [0,0,0,0,0,0,0,0,0,0,0,0,0]
 
 const invalidPos: int = 20
 
@@ -78,6 +81,7 @@ var RLegAngle: float = 1
 # Called when the node enters the scene tree for the first time.
 
 var tempImage : Image
+var tempImage2 : Image
 
 
 func _ready() -> void:
@@ -92,55 +96,61 @@ func _ready() -> void:
 	return
 	"""
 	tempImage = Image.load_from_file("res://icon.svg")
-	NOTprocess()
+	tempImage2 = Image.load_from_file("res://icon.svg")
+	#NOTprocess()
 
 func _process(delta) -> void:
-	if processTrack >= 0:
-		processTrack -= delta
-		_calculateBasicMoveAccuracy(delta)
+	if processTrack < totalDuration:
+		if NOTprocess():
+			processTrack += delta
+			_calculateMoveAccuracy(delta)
+		#_calculateBasicMoveAccuracy(delta)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func NOTprocess() -> void:
+func NOTprocess() -> bool:
 	
 	if not outOfFiles and fileNum < 4000:
-		var temp0 = load_from_file()
-		if temp0:
+		var temp0 = load_from_file("../Demo1_json/", "Yoga1_")
+		var temp00 = load_from_file("../Bad1_json/", "BadYoga1_", fileNumRight, decimalRight)
+		if temp0 and temp00:
+			#$Sprite2D.texture = loadImage("../Demo1_images/", "Yoga1_")
+			#$Sprite2D2.texture = loadImage("../Bad1_images/", "BadYoga1_", fileNumRight, decimalRight)
 			var temp1 = parseJson(temp0)
 			var temp2 = findPositions(temp1)
 			var temp3 = getCoordinates(temp2)
+			
 			mapCoordinates(temp3)
+			_calculateAngles(temp3)
+			
+			var temp01 = parseJson(temp00)
+			var temp02 = findPositions(temp01)
+			var temp03 = getCoordinates(temp02)
+			mapRightCoordinates(temp03)
+			_calculateAngles(temp3, true)
 			#$Sprite2D.texture = tempImage
-		await get_tree().create_timer(waitTime).timeout
-		NOTprocess()
+			fileNum += 1
+			if fileNum >= pow(10, decimal+1):
+				decimal += 1
+			fileNumRight += 1
+			if fileNumRight >= pow(10, decimalRight+1):
+				decimalRight += 1
+			return true
+		else:
+			return false
+		#await get_tree().create_timer(waitTime).timeout
+		#NOTprocess()
+	return false
 
-func load_from_file():
-	#waitTime = 0.02
-	#"""
-	var stringcase = ""
-	var jsoncase = ""
-	if strcase == 0:
-		stringcase = "../FAIL_OPimages/"
-		jsoncase = "../FAIL_json/"
-		$UserModel.visible = false
-	elif strcase == 1:
-		stringcase = "../PRE_OPimages/"
-		jsoncase = "../PRE_json/"
-	elif strcase == 2:
-		stringcase = "../OPimages/"
-		jsoncase = "../json/"
-		waitTime = 0.02
-	
-	var jpgName : String = stringcase + parseStr.substr(0, strLength - decimal) + str(fileNum) + "_rendered.jpg"
+func loadImage(stringcase : String, stringstr : String, fN = fileNum, dec = decimal) -> ImageTexture:
+	var jpgName : String = stringcase + stringstr + parseStr.substr(0, strLength - decimal) + str(fN) + "_rendered.jpg"
 	var jpg = FileAccess.open(jpgName, FileAccess.READ_WRITE)
+	
 	if jpg == null:
 		print("Error opening file: ", jpgName)
 		return null
 	if jpg.get_length() < 100000:
 		print("Jpg too small ")
 		return null
-	else:
-		pass
-		#print("jpg length", jpg.get_length())
+	
 	var buffer = jpg.get_buffer(jpg.get_length()) # Read entire file into a PackedByteArray
 	
 	var tempError = tempImage.load_jpg_from_buffer(buffer)
@@ -148,20 +158,21 @@ func load_from_file():
 		print("Temperror ", tempError)	
 		return null
 	#"""
+	# + stringstr2 
 	
-	var fileName : String = jsoncase + parseStr.substr(0, strLength - decimal) + str(fileNum) + "_keypoints.json"
-	#var fileName : String = "res://json/" + parseStr.substr(0, strLength - decimal) + str(fileNum) + "_keypoints.json"
+	jpg.close()
+	return ImageTexture.create_from_image(tempImage)
+
+func load_from_file(jsoncase : String, stringstr : String, fN = fileNum, dec = decimal):
 	
+	var fileName : String = jsoncase + stringstr + parseStr.substr(0, strLength - decimal) + str(fileNum) + "_keypoints.json"
+
 	var file = FileAccess.open(fileName, FileAccess.READ)
 	if file == null:
 		print("Error opening file: ", FileAccess.get_open_error())
 		print(fileName)
 		#outOfFiles = true
 		return null
-	
-	
-	$Sprite2D.texture = ImageTexture.create_from_image(tempImage)
-	jpg.close()
 	
 	var content = file.get_as_text()
 	return content
@@ -186,19 +197,24 @@ func findPositions(jsonDict : Dictionary) -> Array:
 	if jsonDict.is_empty():
 		return []
 	var people = jsonDict["people"]
+	if people.is_empty():
+		return []
 	var peopleDict = people[0]
 	return peopleDict["pose_keypoints_2d"]
 
 func getCoordinates(keypointArray : Array) -> PackedVector2Array:
-	#print(keypointArray.size())
+	var tempSize = keypointArray.size()- 2
 	var coordinateArray = PackedVector2Array()
-	for i in range(0, 73, 3):
+	for i in range(0, tempSize, 3):
 		coordinateArray.append(Vector2(keypointArray[i], keypointArray[i+1]))
 	return coordinateArray
 
-func addLineCoordinate(pos1 : Vector2, pos2 : Vector2, index : int) -> void:
+func addLineCoordinate(pos1 : Vector2, pos2 : Vector2, index : int, right = false) -> void:
 	if 	pos1.length() > 20 and pos2.length() > 20:
-		$UserModel.get_child(index).points = [pos1,pos2]
+		if right:
+			$UserModelRight.get_child(index).points = [pos1,pos2]
+		else:
+			$UserModel.get_child(index).points = [pos1,pos2]
 
 func mapHead(coordinateArray : PackedVector2Array) -> void:
 	return
@@ -222,7 +238,10 @@ func mapTorso(coordinateArray : PackedVector2Array) -> void:
 	pass
 	
 func mapCoordinates(coordinateArray : PackedVector2Array) -> void:
+	
 	#print(coordinateArray)
+	if coordinateArray.size() == 0:
+		return
 	$Node2D.position = coordinateArray[0] * 0.25 - Vector2(22,22)
 	for i in range(4):
 		addLineCoordinate(coordinateArray[i],coordinateArray[i+1], i)
@@ -283,6 +302,33 @@ func mapCoordinates(coordinateArray : PackedVector2Array) -> void:
 	if 	coordinateArray[18].length() > 15:
 		$UserModel/RCheek1618.points =		[coordinateArray[16],coordinateArray[18]]
 	"""
+
+func mapRightCoordinates(coordinateArray : PackedVector2Array) -> void:
+	#print(coordinateArray)
+	if coordinateArray.size() == 0:
+		return
+		
+	$Node2DRight.position = coordinateArray[0] * 0.25 - Vector2(22,22)
+	for i in range(4):
+		addLineCoordinate(coordinateArray[i],coordinateArray[i+1], i)
+	addLineCoordinate(coordinateArray[1],coordinateArray[5], 4)
+	for i in range(5, 7, 1):
+		addLineCoordinate(coordinateArray[i],coordinateArray[i+1], i)
+	addLineCoordinate(coordinateArray[1],coordinateArray[8], 7)
+	for i in range(8, 12, 1):
+		addLineCoordinate(coordinateArray[i],coordinateArray[i+1], i)
+	addLineCoordinate(coordinateArray[8],coordinateArray[12], 11)
+	for i in range(12, 14, 1):
+		addLineCoordinate(coordinateArray[i],coordinateArray[i+1], i)
+	
+	addLineCoordinate(coordinateArray[0],coordinateArray[15], 14)
+	addLineCoordinate(coordinateArray[0],coordinateArray[16], 15)
+	addLineCoordinate(coordinateArray[15],coordinateArray[17], 16)
+	addLineCoordinate(coordinateArray[16],coordinateArray[18], 17)
+	
+	#mapHead(coordinateArray)
+	#_pointsToLength(coordinateArray)
+	
 	
 	fileNum += 1
 	if fileNum >= pow(10, decimal+1):
@@ -297,10 +343,10 @@ func _on_button_button_down() -> void:
 func _percentDifference(A : float, B : float) -> float:
 	#A = fmod(A + 2*PI, 2*PI)
 	#B = fmod(B + 2*PI, 2*PI)
-	if A+B != 0:
-		return abs(A - B) / (2*PI)#((A+B) / 2) 
-	else:
-		return 0
+	var tempDiff = abs(A - B) / (2*PI)
+	if tempDiff > 0.5:
+		tempDiff = 1.0 - tempDiff
+	return pow(tempDiff, 0.25)
 
 func _calculateBasicMoveAccuracy(delta) -> void:
 	#Body 0, Tummy 1, Neck 2, LShoulder 3, LElbow 4, RShoulder 5, RElbow 6, LHip 7, LKnee 8, LCalf 9, RHip 10, RKnee 11, RCalf 12 
@@ -309,81 +355,96 @@ func _calculateBasicMoveAccuracy(delta) -> void:
 	var legRot = $Node2D/Skeleton2D/hip/leg_left.rotation
 	
 	var tempScore = 1 - _percentDifference(rotationTrack[7], legRot) * 0.5
-	print("tempscore 1 ", tempScore, " ", rad_to_deg(rotationTrack[7]), " ", rad_to_deg(legRot))
+	#print("tempscore 1 ", tempScore, " ", rad_to_deg(rotationTrack[7]), " ", rad_to_deg(legRot))
 	var testScore1 = _percentDifference(rotationTrack[6], handRot) + _percentDifference(rotationTrack[5], armRot)
 	var testScore2 = _percentDifference(rotationTrack[5], armRot + 0.5*handRot) * 1.25
 	if testScore1 < testScore2:
 		tempScore -= testScore1 * 0.5
-		print("tempscore 2 ", tempScore, " ", rad_to_deg(rotationTrack[5]), " ", rad_to_deg(armRot))
-		print("tempscore 3 ", tempScore, " ", rad_to_deg(rotationTrack[6]), " ", rad_to_deg(handRot))
+		#print("tempscore 2 ", tempScore, " ", rad_to_deg(rotationTrack[5]), " ", rad_to_deg(armRot))
+		#print("tempscore 3 ", tempScore, " ", rad_to_deg(rotationTrack[6]), " ", rad_to_deg(handRot))
 	else:
 		tempScore -= testScore2 * 0.5
-		print("tempscore 4 ", tempScore, " ", rad_to_deg(rotationTrack[5]), " ", rad_to_deg(armRot))
-		print("tempscore 5 ", tempScore, " ", rad_to_deg(rotationTrack[6]), " ", rad_to_deg(handRot))
+		#print("tempscore 4 ", tempScore, " ", rad_to_deg(rotationTrack[5]), " ", rad_to_deg(armRot))
+		#print("tempscore 5 ", tempScore, " ", rad_to_deg(rotationTrack[6]), " ", rad_to_deg(handRot))
 	accuracyScore = accuracyScore + (delta * tempScore) #/ (totalDuration - processTrack)
 	$AccuracyLabel.text = str(100 * accuracyScore / (totalDuration - processTrack))
 
-func _calculateAngles(coordinateArray : PackedVector2Array):
+func _calculateMoveAccuracy(delta) -> void:
+	#if totalDuration <= processTrack
+	#Body 0, Tummy 1, Neck 2, LShoulder 3, LElbow 4, RShoulder 5, RElbow 6, LHip 7, LKnee 8, LCalf 9, RHip 10, RKnee 11, RCalf 12 
+	var tempScore = 1.0
+	var mult = 1 + processTrack/30
+	#Consider a different scale.
+	for i in range(12):
+		tempScore -= _percentDifference(rotationTrack[i], rotationTrackRight[i]) * mult
+	print(tempScore)
+	accuracyScore = accuracyScore + (delta * tempScore) #/ (totalDuration - processTrack)
+	$AccuracyLabel.text = str(100 * accuracyScore / (processTrack))
+
+func _calculateAngles(coordinateArray : PackedVector2Array, rightAngle = false) -> PackedFloat32Array:
 	#Body 0
 	#null
-	
+	var Skeleton = "Node2DRight2/Skeleton2D/hip/" if rightAngle else "Node2D2/Skeleton2D/hip/"
+	var rotTrack : PackedFloat32Array = [0,0,0,0,0,0,0,0,0,0,0,0,0]
+	if coordinateArray.size() < 14:
+		return rotTrack
 	#Tummy 1
 	if coordinateArray[1].length() > invalidPos and coordinateArray[8].length() > invalidPos:
-		rotationTrack[1] = coordinateArray[8].angle_to_point(coordinateArray[1]) + PI/2
-		$Node2D2/Skeleton2D/hip/chest.rotation = rotationTrack[1]
+		rotTrack[1] = coordinateArray[8].angle_to_point(coordinateArray[1]) + PI/2
+		get_node(Skeleton + "chest").rotation = rotTrack[1]
 	
 	#Neck 2
 	if coordinateArray[1].length() > invalidPos and coordinateArray[0].length() > invalidPos:
-		rotationTrack[2] = coordinateArray[1].angle_to_point(coordinateArray[0]) + PI/2
-		$Node2D2/Skeleton2D/hip/chest/head.rotation = rotationTrack[2]
+		rotTrack[2] = coordinateArray[1].angle_to_point(coordinateArray[0]) + PI/2
+		get_node(Skeleton + "chest/head").rotation = rotTrack[2]
 	
 	#LShoulder 3
 	if coordinateArray[2].length() > invalidPos and coordinateArray[3].length() > invalidPos:
-		rotationTrack[3] = coordinateArray[2].angle_to_point(coordinateArray[3]) - PI/2
-		$Node2D2/Skeleton2D/hip/chest/arm_left.rotation = rotationTrack[3]
+		rotTrack[3] = coordinateArray[2].angle_to_point(coordinateArray[3]) - PI/2
+		get_node(Skeleton + "chest/arm_left").rotation = rotTrack[3]
 	
 	#LElbow 4
 	if coordinateArray[4].length() > invalidPos and coordinateArray[3].length() > invalidPos:
-		rotationTrack[4] = coordinateArray[3].angle_to_point(coordinateArray[4]) - PI/2
-		$Node2D2/Skeleton2D/hip/chest/arm_left/hand_left.rotation = rotationTrack[4]
+		rotTrack[4] = coordinateArray[3].angle_to_point(coordinateArray[4]) - PI/2
+		get_node(Skeleton + "chest/arm_left/hand_left").rotation = rotTrack[4]
 		
 	#RShoulder 5
 	if coordinateArray[5].length() > invalidPos and coordinateArray[6].length() > invalidPos:
-		rotationTrack[5] = coordinateArray[5].angle_to_point(coordinateArray[6]) - PI/2
-		$Node2D2/Skeleton2D/hip/chest/arm_right.rotation = rotationTrack[5]
+		rotTrack[5] = coordinateArray[5].angle_to_point(coordinateArray[6]) - PI/2
+		get_node(Skeleton + "chest/arm_right").rotation = rotTrack[5]
 	
 	#RElbow 6
 	if coordinateArray[7].length() > invalidPos and coordinateArray[6].length() > invalidPos:
-		rotationTrack[6] = coordinateArray[6].angle_to_point(coordinateArray[7])# - PI/2
-		print("coord: ", rotationTrack[6])	
-		$Node2D2/Skeleton2D/hip/chest/arm_right/hand_right.rotation = rotationTrack[6]
+		rotTrack[6] = coordinateArray[6].angle_to_point(coordinateArray[7])# - PI/2
+		get_node(Skeleton + "chest/arm_right/hand_right").rotation = rotTrack[6]
 	
 	#LHip 7
 	if coordinateArray[9].length() > invalidPos and coordinateArray[10].length() > invalidPos:
 		rotationTrack[7] = coordinateArray[9].angle_to_point(coordinateArray[10]) - PI/2	
-		$Node2D2/Skeleton2D/hip/leg_left.rotation = rotationTrack[7]
+		get_node(Skeleton + "leg_left").rotation = rotationTrack[7]
 	
 	#LKnee 8
 	if coordinateArray[11].length() > invalidPos and coordinateArray[10].length() > invalidPos:
-		rotationTrack[8] = coordinateArray[10].angle_to_point(coordinateArray[11]) - PI/2	
-		$Node2D2/Skeleton2D/hip/leg_left/calf_left.rotation = rotationTrack[8]
+		rotTrack[8] = coordinateArray[10].angle_to_point(coordinateArray[11]) - PI/2	
+		get_node(Skeleton + "leg_left/calf_left").rotation = rotTrack[8]
 	
 	#LCalf 9
 	#null
 	
 	#RHip 10
 	if coordinateArray[12].length() > invalidPos and coordinateArray[13].length() > invalidPos:
-		rotationTrack[10] = coordinateArray[12].angle_to_point(coordinateArray[13]) - PI/2
-		$Node2D2/Skeleton2D/hip/leg_right.rotation = rotationTrack[10]
+		rotTrack[10] = coordinateArray[12].angle_to_point(coordinateArray[13]) - PI/2
+		get_node(Skeleton + "leg_right").rotation = rotTrack[10]
 	
 	#RKnee 11
 	if coordinateArray[14].length() > invalidPos and coordinateArray[13].length() > invalidPos:
-		rotationTrack[11] = coordinateArray[13].angle_to_point(coordinateArray[14]) - PI/2
-		$Node2D2/Skeleton2D/hip/leg_right/calf_right.rotation = rotationTrack[11]
+		rotTrack[11] = coordinateArray[13].angle_to_point(coordinateArray[14]) - PI/2
+		get_node(Skeleton + "leg_right/calf_right").rotation = rotTrack[11]
 		
 	#RCalf 12 
 	#null
 	
+	return rotTrack
 	
 #Put this into the various map functions later I'm just lazy here
 func _pointsToLength(coordinateArray : PackedVector2Array):
