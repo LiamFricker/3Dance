@@ -1,7 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://byj4xryba3mrm"]
+[gd_scene load_steps=19 format=3 uid="uid://byj4xryba3mrm"]
 
 [ext_resource type="Script" uid="uid://bin2ge71k0jhu" path="res://2D Integration/2_dance.gd" id="1_ocyea"]
 [ext_resource type="Texture2D" uid="uid://3wiim1jpabr4" path="res://000000000000_rendered.jpg" id="2_6n4lt"]
+[ext_resource type="Texture2D" uid="uid://dlttyarqicnrc" path="res://165308.png" id="3_8joui"]
+[ext_resource type="Texture2D" uid="uid://d2vdlgk5e2f78" path="res://icon.svg" id="4_e8mh8"]
+[ext_resource type="Texture2D" uid="uid://b4wlid2b4aak0" path="res://dance_icon.png" id="4_weoix"]
+[ext_resource type="Theme" uid="uid://dtoh8nm4wv7t" path="res://Themes/base.tres" id="4_xlcpv"]
+[ext_resource type="Texture2D" uid="uid://b0p6cjxbc1t7u" path="res://torso.png" id="5_op4d2"]
+[ext_resource type="Shader" uid="uid://cdlpvchoh5txf" path="res://2D Integration/bodyflow.gdshader" id="7_op4d2"]
 
 [sub_resource type="Animation" id="Animation_6n4lt"]
 resource_name = "BasicMove"
@@ -87,9 +93,55 @@ _data = {
 &"RESET": SubResource("Animation_nwxtl")
 }
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_op4d2"]
+shader = ExtResource("7_op4d2")
+shader_parameter/progress = 0.0
+shader_parameter/offset = 0.0
+shader_parameter/startColor = Color(0.345, 0.376, 0.431, 1)
+shader_parameter/endColor = Color(0.188, 0.22, 0.306, 1)
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_op4d2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a5nek"]
+shader = ExtResource("7_op4d2")
+shader_parameter/progress = 0.0
+shader_parameter/offset = 0.0
+shader_parameter/startColor = Color(0.345, 0.376, 0.431, 1)
+shader_parameter/endColor = Color(0.188, 0.22, 0.306, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bv6kr"]
+shader = ExtResource("7_op4d2")
+shader_parameter/progress = 0.0
+shader_parameter/offset = 0.0
+shader_parameter/startColor = Color(0.345, 0.376, 0.431, 1)
+shader_parameter/endColor = Color(0.188, 0.22, 0.306, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bm501"]
+shader = ExtResource("7_op4d2")
+shader_parameter/progress = 0.0
+shader_parameter/offset = 0.0
+shader_parameter/startColor = Color(0.345, 0.376, 0.431, 1)
+shader_parameter/endColor = Color(0.188, 0.22, 0.306, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8ys8c"]
+shader = ExtResource("7_op4d2")
+shader_parameter/progress = 0.0
+shader_parameter/offset = 0.0
+shader_parameter/startColor = Color(0.345, 0.376, 0.431, 1)
+shader_parameter/endColor = Color(0.188, 0.22, 0.306, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5rmya"]
+shader = ExtResource("7_op4d2")
+shader_parameter/progress = 0.0
+shader_parameter/offset = 0.0
+shader_parameter/startColor = Color(0.345, 0.376, 0.431, 1)
+shader_parameter/endColor = Color(0.188, 0.22, 0.306, 1)
+
 [node name="2Dance" type="Node2D"]
 script = ExtResource("1_ocyea")
 strictness = 0.5
+slowness = 2
+totalDuration = 7650.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -97,18 +149,18 @@ libraries = {
 }
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(288, 162)
+position = Vector2(3548, 61.0006)
 scale = Vector2(-0.45, 0.45)
 texture = ExtResource("2_6n4lt")
 
 [node name="Sprite2D2" type="Sprite2D" parent="."]
-position = Vector2(1297, 182)
+position = Vector2(4557, 81.0006)
 rotation = 1.5708
 scale = Vector2(-0.45, 0.45)
 texture = ExtResource("2_6n4lt")
 
 [node name="UserModel" type="Node2D" parent="."]
-position = Vector2(576, 0)
+position = Vector2(3836, -100.999)
 scale = Vector2(-1.8, 1.8)
 
 [node name="LHead015" type="Line2D" parent="UserModel"]
@@ -172,7 +224,7 @@ scale = Vector2(0.25, 0.25)
 scale = Vector2(0.25, 0.25)
 
 [node name="UserModelRight" type="Node2D" parent="."]
-position = Vector2(576, 0)
+position = Vector2(3836, -100.999)
 scale = Vector2(-1.8, 1.8)
 
 [node name="LHead015" type="Line2D" parent="UserModelRight"]
@@ -235,13 +287,8 @@ scale = Vector2(0.25, 0.25)
 [node name="RLeg1314" type="Line2D" parent="UserModelRight"]
 scale = Vector2(0.25, 0.25)
 
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(594, 321)
-offset = Vector2(300, 150)
-zoom = Vector2(0.5, 0.5)
-
 [node name="Node2D" type="Node2D" parent="."]
-position = Vector2(-98, 886)
+position = Vector2(3162, 785.001)
 scale = Vector2(-1, 1)
 
 [node name="Model" type="Node2D" parent="Node2D"]
@@ -364,7 +411,7 @@ length = 16.0
 bone_angle = 0.0
 
 [node name="Node2D2" type="Node2D" parent="."]
-position = Vector2(-119, 567)
+position = Vector2(3141, 466.001)
 scale = Vector2(-1, 1)
 
 [node name="Model" type="Node2D" parent="Node2D2"]
@@ -485,7 +532,7 @@ length = 16.0
 bone_angle = 0.0
 
 [node name="Node2DRight2" type="Node2D" parent="."]
-position = Vector2(1811, 550)
+position = Vector2(5071, 449.001)
 scale = Vector2(-1, 1)
 
 [node name="Model" type="Node2D" parent="Node2DRight2"]
@@ -606,41 +653,39 @@ length = 16.0
 bone_angle = 0.0
 
 [node name="Label" type="Label" parent="."]
-offset_left = 277.0
-offset_top = 19.0
-offset_right = 389.0
-offset_bottom = 94.0
+offset_left = 3537.0
+offset_top = -81.9994
+offset_right = 3649.0
+offset_bottom = -6.99942
 text = "Accuracy:
 Left Arm: 86%
 Right Leg: 94%"
 
 [node name="Button" type="Button" parent="."]
-offset_left = 473.0
-offset_top = 19.0
-offset_right = 558.0
-offset_bottom = 50.0
+offset_left = 3733.0
+offset_top = -81.9994
+offset_right = 3818.0
+offset_bottom = -50.9994
 text = "Test Basic"
 
 [node name="TextureRect" type="ColorRect" parent="."]
-offset_left = 463.0
-offset_top = 63.0
-offset_right = 700.0
-offset_bottom = 103.0
+offset_left = 3723.0
+offset_top = -37.9994
+offset_right = 3960.0
+offset_bottom = 2.00058
 color = Color(0, 0, 0, 1)
 
 [node name="AccuracyLabel" type="Label" parent="."]
-offset_left = 473.0
-offset_top = 70.0
-offset_right = 513.0
-offset_bottom = 93.0
+offset_left = 3733.0
+offset_top = -30.9994
+offset_right = 3815.0
+offset_bottom = -7.99942
 text = "Accuracy : "
 
-[node name="Timer" type="Timer" parent="."]
-wait_time = 3.0
-
 [node name="Node2DRight" type="Node2D" parent="."]
-position = Vector2(1664, 865)
-scale = Vector2(-1, 1)
+position = Vector2(4924, 764.001)
+rotation = 3.14159
+scale = Vector2(1, -1)
 
 [node name="Model" type="Node2D" parent="Node2DRight"]
 modulate = Color(1, 1, 1, 0.494118)
@@ -760,6 +805,350 @@ rest = Transform2D(1, 0, 0, 1, 0, 35)
 auto_calculate_length_and_angle = false
 length = 16.0
 bone_angle = 0.0
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.1
+autostart = true
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(1.3, 1.3)
+
+[node name="background" type="ColorRect" parent="UI"]
+layout_mode = 0
+offset_right = 1058.0
+offset_bottom = 1570.0
+color = Color(0.662745, 0.662745, 0.662745, 1)
+
+[node name="165308" type="Sprite2D" parent="UI"]
+visible = false
+position = Vector2(529, 749)
+scale = Vector2(2, 2)
+texture = ExtResource("3_8joui")
+
+[node name="Title" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 231.0
+offset_top = 26.0
+offset_right = 750.0
+offset_bottom = 186.0
+theme = ExtResource("4_xlcpv")
+text = "3Dance"
+
+[node name="Results" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 353.0
+offset_top = 196.0
+offset_right = 872.0
+offset_bottom = 375.0
+theme = ExtResource("4_xlcpv")
+theme_override_constants/outline_size = 20
+theme_override_font_sizes/font_size = 65
+text = "RESULTS
+"
+
+[node name="DanceIcon" type="Sprite2D" parent="UI"]
+position = Vector2(778, 100)
+scale = Vector2(2, 2)
+texture = ExtResource("4_weoix")
+
+[node name="Panel" type="PanelContainer" parent="UI"]
+layout_mode = 0
+offset_left = 68.0
+offset_top = 328.0
+offset_right = 512.0
+offset_bottom = 581.0
+theme = ExtResource("4_xlcpv")
+
+[node name="TextureRect" type="TextureRect" parent="UI/Panel"]
+layout_mode = 2
+texture = ExtResource("4_e8mh8")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Panel2" type="PanelContainer" parent="UI"]
+layout_mode = 0
+offset_left = 546.0
+offset_top = 580.0
+offset_right = 798.0
+offset_bottom = 1023.0
+rotation = 4.71239
+theme = ExtResource("4_xlcpv")
+
+[node name="TextureRect" type="TextureRect" parent="UI/Panel2"]
+layout_mode = 2
+theme = ExtResource("4_xlcpv")
+texture = ExtResource("4_e8mh8")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Panel4" type="PanelContainer" parent="UI"]
+visible = false
+layout_mode = 0
+offset_left = 546.0
+offset_top = 328.0
+offset_right = 990.0
+offset_bottom = 582.0
+theme = ExtResource("4_xlcpv")
+
+[node name="TextureRect" type="TextureRect" parent="UI/Panel4"]
+layout_mode = 2
+theme = ExtResource("4_xlcpv")
+texture = ExtResource("4_e8mh8")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Body" type="Node2D" parent="UI"]
+position = Vector2(0, 65)
+
+[node name="Head" type="Polygon2D" parent="UI/Body"]
+material = SubResource("ShaderMaterial_op4d2")
+position = Vector2(493.077, 788.846)
+scale = Vector2(72, 72)
+texture = SubResource("CanvasTexture_op4d2")
+polygon = PackedVector2Array(0.192307, 0.0923077, 0.492307, 0.0153846, 0.776923, 0.0769231, 0.953846, 0.276923, 1.00769, 0.530769, 0.9, 0.853846, 0.584615, 0.992308, 0.276923, 0.946154, 0.0307689, 0.753846, -0.00769234, 0.4)
+
+[node name="LArm" type="Polygon2D" parent="UI/Body"]
+material = SubResource("ShaderMaterial_a5nek")
+position = Vector2(402.047, 902.558)
+scale = Vector2(66.1539, 117.46)
+texture = SubResource("CanvasTexture_op4d2")
+polygon = PackedVector2Array(-0.00769186, 0.7, 0.92254, 0.00114346, 0.992308, 0.692308, 0.707693, 0.930769, 0.353846, 0.976923, 0.069231, 0.915385)
+
+[node name="RArm" type="Polygon2D" parent="UI/Body"]
+material = SubResource("ShaderMaterial_bv6kr")
+position = Vector2(656.154, 902.692)
+scale = Vector2(-66.154, 117.46)
+texture = SubResource("CanvasTexture_op4d2")
+polygon = PackedVector2Array(0.0116282, 0.713827, 0.92254, 0.00114346, 0.992308, 0.692308, 0.707693, 0.930769, 0.353846, 0.976923, 0.069231, 0.915385)
+
+[node name="Torso" type="Polygon2D" parent="UI/Body"]
+material = SubResource("ShaderMaterial_bm501")
+position = Vector2(473.287, 881.612)
+scale = Vector2(113.636, 159.542)
+texture = SubResource("CanvasTexture_op4d2")
+polygon = PackedVector2Array(-0.0153842, 0.0923077, 0.023077, 0.0615385, 0.276923, -0.00769228, 0.692308, -0.00769228, 0.992308, 0.0692308, 1, 1, 0.493929, 1, -0.00769186, 1)
+
+[node name="LLeg" type="Polygon2D" parent="UI/Body"]
+material = SubResource("ShaderMaterial_8ys8c")
+position = Vector2(470.769, 1043.46)
+scale = Vector2(50.7692, 109.302)
+texture = SubResource("CanvasTexture_op4d2")
+polygon = PackedVector2Array(0, 0, 1, 0, 0.992308, 0.876923, 0.653847, 0.992308, 0.253846, 0.984615, 4.76837e-07, 0.830769)
+
+[node name="RLeg" type="Polygon2D" parent="UI/Body"]
+material = SubResource("ShaderMaterial_5rmya")
+position = Vector2(533.846, 1043.46)
+scale = Vector2(50.7692, 109.302)
+texture = SubResource("CanvasTexture_op4d2")
+polygon = PackedVector2Array(0, 0, 1, 0, 0.992308, 0.876923, 0.653847, 0.992308, 0.253846, 0.984615, 4.76837e-07, 0.830769)
+
+[node name="BodyOutline" type="Sprite2D" parent="UI"]
+position = Vector2(529, 1037)
+scale = Vector2(2, 2)
+texture = ExtResource("5_op4d2")
+
+[node name="Bars" type="Node2D" parent="UI"]
+position = Vector2(0, 65)
+
+[node name="Polygon2D" type="Polygon2D" parent="UI/Bars"]
+color = Color(0.0313726, 0.0352941, 0.498039, 1)
+antialiased = true
+polygon = PackedVector2Array(463, 776, 470, 776, 470, 825, 528, 825, 528, 832, 463, 832)
+
+[node name="Polygon2D2" type="Polygon2D" parent="UI/Bars"]
+color = Color(0.0313726, 0.0352941, 0.498039, 1)
+antialiased = true
+polygon = PackedVector2Array(386, 919, 390, 915, 444, 967, 440, 972)
+
+[node name="Polygon2D3" type="Polygon2D" parent="UI/Bars"]
+position = Vector2(200, 7)
+color = Color(0.0313726, 0.0352941, 0.498039, 1)
+antialiased = true
+polygon = PackedVector2Array(465, 909, 470, 913, 417, 967, 413, 963)
+
+[node name="Polygon2D4" type="Polygon2D" parent="UI/Bars"]
+position = Vector2(200, 7)
+color = Color(0.0313726, 0.0352941, 0.498039, 1)
+antialiased = true
+polygon = PackedVector2Array(488, 998, 488, 1028, 403, 1028, 403, 1005, 329, 1005, 329, 1011, 395, 1011, 395, 1035, 494, 1035, 494, 998)
+
+[node name="Polygon2D5" type="Polygon2D" parent="UI/Bars"]
+position = Vector2(200, 7)
+color = Color(0.0313726, 0.0352941, 0.498039, 1)
+antialiased = true
+polygon = PackedVector2Array(431, 1090, 431, 1097, 360, 1097, 360, 1090)
+
+[node name="Polygon2D6" type="Polygon2D" parent="UI/Bars"]
+position = Vector2(200, 7)
+color = Color(0.0313726, 0.0352941, 0.498039, 1)
+antialiased = true
+polygon = PackedVector2Array(212, 1089, 212, 1097, 297, 1097, 297, 1089)
+
+[node name="Teacher" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 173.0
+offset_top = 587.0
+offset_right = 692.0
+offset_bottom = 747.0
+theme = ExtResource("4_xlcpv")
+theme_override_constants/outline_size = 15
+theme_override_font_sizes/font_size = 43
+text = "TEACHER"
+
+[node name="You" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 715.0
+offset_top = 586.0
+offset_right = 1234.0
+offset_bottom = 746.0
+theme = ExtResource("4_xlcpv")
+theme_override_constants/outline_size = 15
+theme_override_font_sizes/font_size = 43
+text = "YOU"
+
+[node name="AccuracyScore" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 104.0
+offset_top = 662.0
+offset_right = 952.0
+offset_bottom = 822.0
+theme = ExtResource("4_xlcpv")
+theme_override_constants/outline_size = 15
+theme_override_font_sizes/font_size = 48
+text = "TOTAL ACCURACY SCORE: ##%"
+
+[node name="CurrentScore" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 111.0
+offset_top = 737.0
+offset_right = 946.0
+offset_bottom = 897.0
+theme = ExtResource("4_xlcpv")
+theme_override_constants/outline_size = 0
+theme_override_font_sizes/font_size = 43
+text = "CURRENT ACCURACY SCORE: ##%"
+
+[node name="AdviceTitle" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 190.0
+offset_top = 1283.0
+offset_right = 869.0
+offset_bottom = 1443.0
+theme = ExtResource("4_xlcpv")
+theme_override_constants/outline_size = 0
+theme_override_font_sizes/font_size = 43
+text = "ADVICE FOR IMPROVEMENT"
+
+[node name="AccuracyScore3" type="Label" parent="UI"]
+visible = false
+layout_mode = 0
+offset_left = 807.0
+offset_top = 737.0
+offset_right = 1468.0
+offset_bottom = 897.0
+theme = ExtResource("4_xlcpv")
+theme_override_constants/outline_size = 0
+theme_override_font_sizes/font_size = 43
+text = "##%"
+
+[node name="AccuracyScoreHead" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 448.0
+offset_top = 807.0
+offset_right = 1109.0
+offset_bottom = 967.0
+theme = ExtResource("4_xlcpv")
+theme_override_constants/outline_size = 0
+theme_override_font_sizes/font_size = 26
+text = "HEAD: ##%"
+
+[node name="AccuracyScoreLArm" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 161.0
+offset_top = 953.0
+offset_right = 822.0
+offset_bottom = 1113.0
+theme = ExtResource("4_xlcpv")
+theme_override_constants/outline_size = 0
+theme_override_font_sizes/font_size = 26
+text = "LEFT ARM: ##%"
+
+[node name="AccuracyScoreRArm" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 653.0
+offset_top = 953.0
+offset_right = 1314.0
+offset_bottom = 1113.0
+theme = ExtResource("4_xlcpv")
+theme_override_constants/outline_size = 0
+theme_override_font_sizes/font_size = 26
+text = "RIGHT ARM: ##%"
+
+[node name="AccuracyScoreTorso" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 680.0
+offset_top = 1041.0
+offset_right = 1341.0
+offset_bottom = 1201.0
+theme = ExtResource("4_xlcpv")
+theme_override_constants/outline_size = 0
+theme_override_font_sizes/font_size = 26
+text = "TORSO: ##%"
+
+[node name="AccuracyScoreLLeg" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 189.0
+offset_top = 1149.0
+offset_right = 850.0
+offset_bottom = 1309.0
+theme = ExtResource("4_xlcpv")
+theme_override_constants/outline_size = 0
+theme_override_font_sizes/font_size = 26
+text = "LEFT LEG: ##%"
+
+[node name="AccuracyScoreRLeg" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 634.0
+offset_top = 1149.0
+offset_right = 1295.0
+offset_bottom = 1309.0
+theme = ExtResource("4_xlcpv")
+theme_override_constants/outline_size = 0
+theme_override_font_sizes/font_size = 26
+text = "RIGHT LEG: ##%"
+
+[node name="Panel3" type="PanelContainer" parent="UI"]
+layout_mode = 0
+offset_left = 86.0
+offset_top = 1348.0
+offset_right = 972.0
+offset_bottom = 1535.0
+theme = ExtResource("4_xlcpv")
+
+[node name="Advice" type="Label" parent="UI/Panel3"]
+layout_mode = 2
+theme = ExtResource("4_xlcpv")
+theme_override_constants/outline_size = 0
+theme_override_font_sizes/font_size = 25
+text = " Generating...
+
+
+
+"
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(390, 870)
+offset = Vector2(300, 150)
+zoom = Vector2(0.5, 0.5)
+
+[node name="Camera2D2" type="Camera2D" parent="."]
+position = Vector2(384, 361)
+offset = Vector2(300, 150)
+enabled = false
 
 [connection signal="button_down" from="Button" to="." method="_on_button_button_down"]
 [connection signal="timeout" from="Timer" to="." method="_on_button_button_down"]

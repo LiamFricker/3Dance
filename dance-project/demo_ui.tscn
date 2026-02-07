@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=3 uid="uid://cj3fxvtrxo22t"]
+
+[ext_resource type="Texture2D" uid="uid://dlttyarqicnrc" path="res://165308.png" id="1_kip6k"]
+[ext_resource type="VideoStream" uid="uid://bof3lu730x3v6" path="res://HH1.ogv" id="2_0au0k"]
+[ext_resource type="Script" uid="uid://bsohcal6ghp4r" path="res://video_player.gd" id="3_0au0k"]
+[ext_resource type="VideoStream" uid="uid://bqkqfkuwdlf33" path="res://BadHH1.ogv" id="3_2qk2y"]
+
+[node name="demo_ui" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="165308" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(264, 374)
+texture = ExtResource("1_kip6k")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_right = 788.0
+offset_bottom = 893.0
+
+[node name="background" type="ColorRect" parent="."]
+visible = false
+layout_mode = 2
+offset_right = 528.0
+offset_bottom = 748.0
+color = Color(0.662745, 0.662745, 0.662745, 1)
+
+[node name="VideoLeft" type="VideoStreamPlayer" parent="."]
+layout_mode = 2
+offset_left = 36.0
+offset_top = 166.0
+offset_right = 253.0
+offset_bottom = 287.0
+stream = ExtResource("2_0au0k")
+autoplay = true
+script = ExtResource("3_0au0k")
+
+[node name="VideoRight" type="VideoStreamPlayer" parent="."]
+layout_mode = 2
+offset_left = 275.0
+offset_top = 166.0
+offset_right = 492.0
+offset_bottom = 289.0
+stream = ExtResource("3_2qk2y")
+autoplay = true
+script = ExtResource("3_0au0k")
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0

@@ -1,27 +1,38 @@
 extends Node2D
 
-var fileNum: int = 0#180
-var decimal: int = 0
-var fileNumRight: int = 0#100
-var decimalRight: int = 0
+@export  var fileNum: int = 0#180
+@onready var decimal: int = floor(log(fileNum+1)/ log(10))
+@export var fileNumRight: int = 200#100
+@onready var decimalRight: int = floor(log(fileNumRight+1)/ log(10))
+var deltaNum: int = 1
+
 const strLength: int = 11
 var parseStr : String = "00000000000"
 var outOfFiles : bool = false
 var waitTime : float = 0.033
 
 @export var strictness : float = 1.0
+@export var slowness : int = 1
+var timerCheck : int = 0
 
 @export var processTrack : float = 0
 @export var totalDuration : float = 72
-@export var accuracyScore : float = 0.0
+var accuracyScore : float = 0.0
+var accuracyScoreLLeg : float = 0.0
+var accuracyScoreRLeg : float = 0.0
+var accuracyScoreLArm : float = 0.0
+var accuracyScoreRArm : float = 0.0
+var accuracyScoreHead : float = 0.0
+var accuracyScoreTorso : float = 0.0
 
 #0: fail, 1: pass, 2: test
 var strcase = 1
 
 #Hip, Chest, Head, LArm, LHand, RArm, RHand, LLeg, LCalf, LFoot, RLeg, RCalf, RFoot
 #Body 0, Tummy 1, Neck 2, LShoulder 3, LElbow 4, RShoulder 5, RElbow 6, LHip 7, LKnee 8, LCalf 9, RHip 10, RKnee 11, RCalf 12 
-var rotationTrack : PackedFloat32Array = [0,0,0,0,0,0,0,0,0,0,0,0,0]
-var rotationTrackRight : PackedFloat32Array = [0,0,0,0,0,0,0,0,0,0,0,0,0]
+#Body, LCalf, RCalf Removed
+var rotationTrack : PackedFloat32Array = [0,0,0,0,0,0,0,0,0,0]#0,0,0]
+var rotationTrackRight : PackedFloat32Array = [0,0,0,0,0,0,0,0,0,0]#0,0,0]
 
 const invalidPos: int = 20
 
@@ -102,27 +113,42 @@ func _ready() -> void:
 	#NOTprocess()
 
 func _process(delta) -> void:
-	if processTrack < totalDuration:
-		if NOTprocess():
-			processTrack += delta
-			_calculateMoveAccuracy(delta)
-		#_calculateBasicMoveAccuracy(delta)
+	timerCheck += 1
+	#print("FPS: ", 1.0/delta)
+	if timerCheck % slowness == 0:
+		if processTrack < totalDuration:
+			if NOTprocess(delta):
+				processTrack += deltaNum
+				_calculateMoveAccuracy(deltaNum)
+				
+			#_calculateBasicMoveAccuracy(delta)
 
-func NOTprocess() -> bool:
-	
-	if not outOfFiles and fileNum < 4000:
-		#var temp0 = load_from_file("../HH3_json/", "HH3_")
-		#var temp00 = load_from_file("../GoodHH1_json/", "GoodHH1_", fileNumRight, decimalRight)
-		#var temp00 = load_from_file("../BadHH3_json/", "BadHH3_", fileNumRight, decimalRight)
+func _on_button_button_down() -> void:
+	if not outOfFiles:
+		$UI/Panel/TextureRect.texture = loadImage("../HH1_images/", "HH1_", fileNum, decimal)
+		#$UI/Panel2/TextureRect.texture = loadImage("../GoodHH1_images/", "GoodHH1_", fileNumRight, decimalRight)
+		$UI/Panel2/TextureRect.texture = loadImage("../BadHH1_images/", "BadHH1_", fileNumRight, decimalRight)
 		
-		var temp0 = load_from_file("../Demo3_json/", "Yoga3_")
+		#$UI/Panel/TextureRect.texture = loadImage("../Demo1_images/", "Yoga1_", fileNum, decimal)
+		#$Sprite2D2.texture = loadImage("../Good1_images/", "GoodYoga1_", fileNumRight, decimalRight)
+		#$UI/Panel2/TextureRect.texture = loadImage("../BadYoga1_images/", "BadYoga1_", fileNumRight, decimalRight)
+		#$Sprite2D2.texture = loadImage("../Bad3_images/", "BadYoga3_", fileNumRight, decimalRight)
+		#$Sprite2D2.texture = loadImage("../Good1_images/", "GoodYoga1_", fileNumRight, decimalRight)
+		#$Sprite2D2.texture = loadImage("../Demo1_images/", "Yoga1_", fileNumRight, decimalRight)
+	else:
+		$Timer.stop()
+
+func NOTprocess(delta : float) -> bool:
+	if not outOfFiles and fileNum < 4000:
+		var temp0 = load_from_file("../HH1_json/", "HH1_")
+		#var temp00 = load_from_file("../HH1_json/", "HH1_")
+		#var temp00 = load_from_file("../GoodHH1_json/", "GoodHH1_", fileNumRight, decimalRight)
+		var temp00 = load_from_file("../BadHH1_json/", "BadHH1_", fileNumRight, decimalRight)
+		
+		#var temp0 = load_from_file("../Demo1_json/", "Yoga1_")
 		#var temp00 = load_from_file("../Good1_json/", "GoodYoga1_", fileNumRight, decimalRight)
-		var temp00 = load_from_file("../Bad3_json/", "BadYoga3_", fileNumRight, decimalRight)
+		#var temp00 = load_from_file("../Bad1_json/", "BadYoga1_", fileNumRight, decimalRight)
 		if temp0 and temp00:
-			#$Sprite2D.texture = loadImage("../Demo3_images/", "Yoga3_")
-			#$Sprite2D2.texture = loadImage("../Bad3_images/", "BadYoga3_", fileNumRight, decimalRight)
-			#$Sprite2D2.texture = loadImage("../Good1_images/", "GoodYoga1_", fileNumRight, decimalRight)
-			#$Sprite2D2.texture = loadImage("../Demo1_images/", "Yoga1_", fileNumRight, decimalRight)
 			
 			var temp1 = parseJson(temp0)
 			var temp2 = findPositions(temp1)
@@ -137,10 +163,13 @@ func NOTprocess() -> bool:
 			#mapRightCoordinates(temp03)
 			rotationTrackRight = _calculateAngles(temp03, true)
 			#$Sprite2D.texture = tempImage
-			fileNum += 1
+			
+			deltaNum = floor((delta * 60) + 0.5)
+			
+			fileNum += deltaNum
 			if fileNum >= pow(10, decimal+1):
 				decimal += 1
-			fileNumRight += 1
+			fileNumRight += deltaNum
 			if fileNumRight >= pow(10, decimalRight+1):
 				decimalRight += 1
 			return true
@@ -148,14 +177,42 @@ func NOTprocess() -> bool:
 			return false
 		#await get_tree().create_timer(waitTime).timeout
 		#NOTprocess()
+	else:
+		totalDuration = 1
+		_chooseAdvice()
+		
 	return false
 
+func _chooseAdvice() -> void:
+	var lines = 4
+	var adviceStr = ""
+	var passScore = 0.7 * processTrack
+	if accuracyScoreLLeg < passScore or accuracyScoreRLeg < passScore:
+		adviceStr += " Bring your knees up higher (90 degree bend).\n"
+		lines -= 1
+	if accuracyScoreLArm < passScore or accuracyScoreRArm < passScore:
+		adviceStr += " Keep your arms bent (90 degree bend).\n" #from the duration of this move
+		lines -= 1
+	if accuracyScoreHead < passScore:
+		adviceStr += " Turn your head all the way to your left.\n"
+		lines -= 1
+	if accuracyScoreTorso < passScore:
+		adviceStr += " Try to make your stance wider.\n"
+		lines -= 1
+	for i in range(lines):
+		adviceStr += "\n"
+	$UI/Panel3/Advice.text = adviceStr
+	
+	
+	
+
 func loadImage(stringcase : String, stringstr : String, fN = fileNum, dec = decimal) -> ImageTexture:
-	var jpgName : String = stringcase + stringstr + parseStr.substr(0, strLength - decimal) + str(fN) + "_rendered.jpg"
+	var jpgName : String = stringcase + stringstr + parseStr.substr(0, strLength - dec) + str(fN) + "_rendered.jpg"
 	var jpg = FileAccess.open(jpgName, FileAccess.READ_WRITE)
 	
 	if jpg == null:
 		print("Error opening file: ", jpgName)
+		outOfFiles = true
 		return null
 	if jpg.get_length() < 100000:
 		print("Jpg too small ")
@@ -181,7 +238,7 @@ func load_from_file(jsoncase : String, stringstr : String, fN = fileNum, dec = d
 	if file == null:
 		print("Error opening file: ", FileAccess.get_open_error())
 		print(fileName)
-		#outOfFiles = true
+		outOfFiles = true
 		return null
 	
 	var content = file.get_as_text()
@@ -344,20 +401,14 @@ func mapRightCoordinates(coordinateArray : PackedVector2Array) -> void:
 	#if fileNum >= pow(10, decimal+1):
 	#	decimal += 1
 
-func _on_button_button_down() -> void:
-	#$AnimationPlayer.play("BasicMove")
-	processTrack = 2.0
-	totalDuration = 2.0
-	accuracyScore = 0
-
 func _percentDifference(A : float, B : float) -> float:
 	#A = fmod(A + 2*PI, 2*PI)
 	#B = fmod(B + 2*PI, 2*PI)
-	var tempDiff = abs(A - B) / (2*PI)
-	if tempDiff > 0.5:
-		tempDiff = 1.0 - tempDiff
-	#print("A: ",  A, " B: ", B, " tD: ", tempDiff)
-	return pow(tempDiff, strictness)
+	var tempDiff = abs(A - B) / (PI)
+	if tempDiff > 1.0:
+		tempDiff = 2.0 - tempDiff
+	#print("A: ",  A, " B: ", B, " tD: ", tempDiff, " postTemp: ", pow(tempDiff/2, strictness))
+	return pow(tempDiff/2, strictness)
 
 func _calculateBasicMoveAccuracy(delta) -> void:
 	#Body 0, Tummy 1, Neck 2, LShoulder 3, LElbow 4, RShoulder 5, RElbow 6, LHip 7, LKnee 8, LCalf 9, RHip 10, RKnee 11, RCalf 12 
@@ -383,61 +434,103 @@ func _calculateBasicMoveAccuracy(delta) -> void:
 func _calculateMoveAccuracy(delta) -> void:
 	#if totalDuration <= processTrack
 	#Body 0, Tummy 1, Neck 2, LShoulder 3, LElbow 4, RShoulder 5, RElbow 6, LHip 7, LKnee 8, LCalf 9, RHip 10, RKnee 11, RCalf 12 
+	#Tummy 0, Neck 1, LShoulder 2, LElbow 3, RShoulder 4, RElbow 5, LHip 6, LKnee 7, RHip 8, RKnee 9 
 	var tempScore = 1.0
-	var mult = 1 + processTrack/30
+	#var mult = 1 + processTrack/1800
 	#Consider a different scale.
-	for i in range(12):
-		tempScore -= _percentDifference(rotationTrack[i], rotationTrackRight[i]) * mult / 12
-		#print(i)
-	print(tempScore)
-	accuracyScore = accuracyScore + (delta * tempScore) #/ (totalDuration - processTrack)
-	$AccuracyLabel.text = str(100 * accuracyScore / (processTrack))
+	#for i in range(0, 10, 1):
+	#	var multScore = _percentDifference(rotationTrack[i], rotationTrackRight[i]) 
+		#tempScore -= multScore * 1/10#pow(multScore, mult)
+		#tempScore -= 0.1 * _percentDifference(rotationTrack[i], rotationTrackRight[i]) 
+		#print(i)#Body 0, Tummy 1, Neck 2, LShoulder 3, LElbow 4, RShoulder 5, RElbow 6, LHip 7, LKnee 8, LCalf 9, RHip 10, RKnee 11, RCalf 12 
+	var multScore = 0
+	
+	multScore = _percentDifference(rotationTrack[0], rotationTrackRight[0])
+	tempScore -= multScore * 0.1
+	accuracyScoreTorso += (deltaNum * (1.0 - multScore))
+	$UI/AccuracyScoreTorso.text = "TORSO: " + str(ceil(100 * accuracyScoreTorso / (processTrack))) + "%"
+	$UI/Body/Torso.material.set_shader_parameter("progress", max(processTrack * 2 / totalDuration, accuracyScoreTorso / processTrack))
+	
+	multScore = _percentDifference(rotationTrack[1], rotationTrackRight[1])
+	tempScore -= multScore * 0.1
+	accuracyScoreHead += (deltaNum * (1.0 - multScore))
+	$UI/AccuracyScoreHead.text = "HEAD: " + str(ceil(100 * accuracyScoreHead / (processTrack))) + "%"
+	$UI/Body/Head.material.set_shader_parameter("progress", max(processTrack * 2 / totalDuration, accuracyScoreHead / processTrack))
+	
+	multScore = _percentDifference(rotationTrack[2], rotationTrackRight[2])+_percentDifference(rotationTrack[3], rotationTrackRight[3])
+	tempScore -= multScore * 0.1
+	accuracyScoreLArm += (deltaNum * (1.0 - multScore*0.5))
+	$UI/AccuracyScoreLArm.text = "LEFT ARM: " + str(ceil(100 * accuracyScoreLArm / (processTrack))) + "%"
+	$UI/Body/LArm.material.set_shader_parameter("progress", max(processTrack * 2 / totalDuration, accuracyScoreLArm / processTrack))
+	
+	multScore = _percentDifference(rotationTrack[4], rotationTrackRight[4])+_percentDifference(rotationTrack[5], rotationTrackRight[5])
+	tempScore -= multScore * 0.1
+	accuracyScoreRArm += (deltaNum * (1.0 - multScore*0.5))
+	$UI/AccuracyScoreRArm.text = "RIGHT ARM: " + str(ceil(100 * accuracyScoreRArm / (processTrack))) + "%"
+	$UI/Body/RArm.material.set_shader_parameter("progress", max(processTrack * 2 / totalDuration, accuracyScoreRArm / processTrack))
+	
+	multScore = _percentDifference(rotationTrack[6], rotationTrackRight[6])+_percentDifference(rotationTrack[7], rotationTrackRight[7])
+	tempScore -= multScore * 0.1
+	accuracyScoreLLeg += (deltaNum * (1.0 - multScore*0.5))
+	$UI/AccuracyScoreLLeg.text = "LEFT LEG: " + str(ceil(100 * accuracyScoreLLeg / (processTrack))) + "%"
+	$UI/Body/LLeg.material.set_shader_parameter("progress", max(processTrack * 2 / totalDuration, accuracyScoreLLeg / processTrack))
+	
+	multScore = _percentDifference(rotationTrack[8], rotationTrackRight[8])+_percentDifference(rotationTrack[9], rotationTrackRight[9])
+	tempScore -= multScore * 0.1
+	accuracyScoreRLeg += (deltaNum * (1.0 - multScore*0.5))
+	$UI/AccuracyScoreRLeg.text = "RIGHT LEG: " + str(ceil(100 * accuracyScoreRLeg / (processTrack))) + "%"
+	$UI/Body/RLeg.material.set_shader_parameter("progress", max(processTrack * 2 / totalDuration, accuracyScoreRLeg / processTrack))
+	
+	accuracyScore += (deltaNum * tempScore) 
+	$UI/AccuracyScore.text = "TOTAL ACCURACY SCORE: " + str(ceil(100 * accuracyScore / (processTrack))) + "%"
+	$UI/CurrentScore.text = "CURRENT ACCURACY SCORE: " + str(ceil(100 * tempScore)) + "%"
 
 func _calculateAngles(coordinateArray : PackedVector2Array, rightAngle = false) -> PackedFloat32Array:
 	#Body 0
 	#null
 	var Skeleton = "Node2DRight2/Skeleton2D/hip/" if rightAngle else "Node2D2/Skeleton2D/hip/"
-	var rotTrack : PackedFloat32Array = [0,0,0,0,0,0,0,0,0,0,0,0,0]
+	var rotTrack : PackedFloat32Array = [0,0,0,0,0,0,0,0,0,0]#,0,0,0]
 	if coordinateArray.size() < 14:
 		return rotTrack
+	
 	#Tummy 1
 	if coordinateArray[1].length() > invalidPos and coordinateArray[8].length() > invalidPos:
-		rotTrack[1] = coordinateArray[8].angle_to_point(coordinateArray[1]) + PI/2
+		rotTrack[0] = coordinateArray[8].angle_to_point(coordinateArray[1]) + PI/2
 		#get_node(Skeleton + "chest").rotation = rotTrack[1]
 	
 	#Neck 2
 	if coordinateArray[1].length() > invalidPos and coordinateArray[0].length() > invalidPos:
-		rotTrack[2] = coordinateArray[1].angle_to_point(coordinateArray[0]) + PI/2
+		rotTrack[1] = coordinateArray[1].angle_to_point(coordinateArray[0]) + PI/2
 		#get_node(Skeleton + "chest/head").rotation = rotTrack[2]
 	
 	#LShoulder 3
 	if coordinateArray[2].length() > invalidPos and coordinateArray[3].length() > invalidPos:
-		rotTrack[3] = coordinateArray[2].angle_to_point(coordinateArray[3]) - PI/2
+		rotTrack[2] = coordinateArray[2].angle_to_point(coordinateArray[3]) - PI/2
 		#get_node(Skeleton + "chest/arm_left").rotation = rotTrack[3]
 	
 	#LElbow 4
 	if coordinateArray[4].length() > invalidPos and coordinateArray[3].length() > invalidPos:
-		rotTrack[4] = coordinateArray[3].angle_to_point(coordinateArray[4]) - PI/2
+		rotTrack[3] = coordinateArray[3].angle_to_point(coordinateArray[4]) - PI/2
 		#get_node(Skeleton + "chest/arm_left/hand_left").rotation = rotTrack[4]
 		
 	#RShoulder 5
 	if coordinateArray[5].length() > invalidPos and coordinateArray[6].length() > invalidPos:
-		rotTrack[5] = coordinateArray[5].angle_to_point(coordinateArray[6]) - PI/2
+		rotTrack[4] = coordinateArray[5].angle_to_point(coordinateArray[6]) - PI/2
 		#get_node(Skeleton + "chest/arm_right").rotation = rotTrack[5]
 	
 	#RElbow 6
 	if coordinateArray[7].length() > invalidPos and coordinateArray[6].length() > invalidPos:
-		rotTrack[6] = coordinateArray[6].angle_to_point(coordinateArray[7])# - PI/2
+		rotTrack[5] = coordinateArray[6].angle_to_point(coordinateArray[7])# - PI/2
 		#get_node(Skeleton + "chest/arm_right/hand_right").rotation = rotTrack[6]
 	
 	#LHip 7
 	if coordinateArray[9].length() > invalidPos and coordinateArray[10].length() > invalidPos:
-		rotTrack[7] = coordinateArray[9].angle_to_point(coordinateArray[10]) - PI/2	
+		rotTrack[6] = coordinateArray[9].angle_to_point(coordinateArray[10]) - PI/2	
 		#get_node(Skeleton + "leg_left").rotation = rotTrack[7]
 	
 	#LKnee 8
 	if coordinateArray[11].length() > invalidPos and coordinateArray[10].length() > invalidPos:
-		rotTrack[8] = coordinateArray[10].angle_to_point(coordinateArray[11]) - PI/2	
+		rotTrack[7] = coordinateArray[10].angle_to_point(coordinateArray[11]) - PI/2	
 		#get_node(Skeleton + "leg_left/calf_left").rotation = rotTrack[8]
 	
 	#LCalf 9
@@ -445,17 +538,16 @@ func _calculateAngles(coordinateArray : PackedVector2Array, rightAngle = false) 
 	
 	#RHip 10
 	if coordinateArray[12].length() > invalidPos and coordinateArray[13].length() > invalidPos:
-		rotTrack[10] = coordinateArray[12].angle_to_point(coordinateArray[13]) - PI/2
+		rotTrack[8] = coordinateArray[12].angle_to_point(coordinateArray[13]) - PI/2
 		#get_node(Skeleton + "leg_right").rotation = rotTrack[10]
 	
 	#RKnee 11
 	if coordinateArray[14].length() > invalidPos and coordinateArray[13].length() > invalidPos:
-		rotTrack[11] = coordinateArray[13].angle_to_point(coordinateArray[14]) - PI/2
+		rotTrack[9] = coordinateArray[13].angle_to_point(coordinateArray[14]) - PI/2
 		#get_node(Skeleton + "leg_right/calf_right").rotation = rotTrack[11]
 		
 	#RCalf 12 
 	#null
-	
 	return rotTrack
 	
 #Put this into the various map functions later I'm just lazy here
@@ -570,3 +662,20 @@ func _pointsToLength(coordinateArray : PackedVector2Array):
 	if hipNeckPos != Vector2.ZERO:
 		#print(0.45*hipNeckPos)
 		$Node2D/Skeleton2D/hip.position = Vector2(0.45,0.45)*hipNeckPos + Vector2(-425,15) #- Vector2(120,25)
+		
+
+func _input(event):
+	const SCROLL_SPEED = 36 
+	#685
+	#1021
+
+	#1360
+	#1020
+
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP: 
+			if $Camera2D2.position.y >= 360:
+				$Camera2D2.position.y -= SCROLL_SPEED
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN: 
+			if $Camera2D2.position.y <= 1380:
+				$Camera2D2.position.y += SCROLL_SPEED
