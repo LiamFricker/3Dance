@@ -1,10 +1,21 @@
 extends Node2D
 
-@export  var fileNum: int = 0#180
+@export var fileNum: int = 0#180
 @onready var decimal: int = floor(log(fileNum+1)/ log(10))
-@export var fileNumRight: int = 200#100
+@export var fileNumRight: int = 0#100
 @onready var decimalRight: int = floor(log(fileNumRight+1)/ log(10))
+@export var endFileLeft : int = 0
+@export var endFileRight : int = 0
 var deltaNum: int = 1
+var fileMax: int = 763
+
+#0 Start, 1 Loading, 2 VideoTuning, 3 UI
+var menu_state = 0
+var teacherSelection : bool = true
+var file_path_left = "../HH1_" #"../Teacher_"
+var file_name_left = "HH1_"
+var file_path_right = "../BadHH1_" #"../Student_" 
+var file_name_right = "BadHH1_"
 
 const strLength: int = 11
 var parseStr : String = "00000000000"
@@ -113,21 +124,20 @@ func _ready() -> void:
 	#NOTprocess()
 
 func _process(delta) -> void:
-	timerCheck += 1
-	#print("FPS: ", 1.0/delta)
-	if timerCheck % slowness == 0:
-		if processTrack < totalDuration:
-			if NOTprocess(delta):
-				processTrack += deltaNum
-				_calculateMoveAccuracy(deltaNum)
+	if menu_state == 3:
+		timerCheck += 1
+		if timerCheck % slowness == 0:
+			if processTrack < totalDuration:
+				if NOTprocess(delta):
+					processTrack += deltaNum
+					_calculateMoveAccuracy(deltaNum)
 				
-			#_calculateBasicMoveAccuracy(delta)
 
 func _on_button_button_down() -> void:
 	if not outOfFiles:
-		$UI/Panel/TextureRect.texture = loadImage("../HH1_images/", "HH1_", fileNum, decimal)
+		$UI/Panel/TextureRect.texture = loadImage(file_path_left + "images/", file_name_left, fileNum, decimal)
 		#$UI/Panel2/TextureRect.texture = loadImage("../GoodHH1_images/", "GoodHH1_", fileNumRight, decimalRight)
-		$UI/Panel2/TextureRect.texture = loadImage("../BadHH1_images/", "BadHH1_", fileNumRight, decimalRight)
+		$UI/Panel2/TextureRect.texture = loadImage(file_path_right + "images/", file_name_right, fileNumRight, decimalRight)
 		
 		#$UI/Panel/TextureRect.texture = loadImage("../Demo1_images/", "Yoga1_", fileNum, decimal)
 		#$Sprite2D2.texture = loadImage("../Good1_images/", "GoodYoga1_", fileNumRight, decimalRight)
@@ -140,10 +150,10 @@ func _on_button_button_down() -> void:
 
 func NOTprocess(delta : float) -> bool:
 	if not outOfFiles and fileNum < 4000:
-		var temp0 = load_from_file("../HH1_json/", "HH1_")
+		var temp0 = load_from_file(file_path_left + "json/", file_name_left)
 		#var temp00 = load_from_file("../HH1_json/", "HH1_")
 		#var temp00 = load_from_file("../GoodHH1_json/", "GoodHH1_", fileNumRight, decimalRight)
-		var temp00 = load_from_file("../BadHH1_json/", "BadHH1_", fileNumRight, decimalRight)
+		var temp00 = load_from_file(file_path_right + "json/", file_name_right, fileNumRight, decimalRight)
 		
 		#var temp0 = load_from_file("../Demo1_json/", "Yoga1_")
 		#var temp00 = load_from_file("../Good1_json/", "GoodYoga1_", fileNumRight, decimalRight)
@@ -330,45 +340,6 @@ func mapCoordinates(coordinateArray : PackedVector2Array) -> void:
 	#mapHead(coordinateArray)
 	_pointsToLength(coordinateArray)
 	_calculateAngles(coordinateArray)
-	
-	"""
-	if 	coordinateArray[1].length() > 15:
-		$UserModel/Neck01.points = 			[coordinateArray[0],coordinateArray[1]]
-	if 	coordinateArray[2].length() > 15:
-		$UserModel/LShoulder12.points =		[coordinateArray[1],coordinateArray[2]]
-	if 	coordinateArray[3].length() > 15:
-		$UserModel/LArm23.points = 			[coordinateArray[2],coordinateArray[3]]
-	if 	coordinateArray[4].length() > 15:
-		$UserModel/LHand34.points = 		[coordinateArray[3],coordinateArray[4]]
-	if 	coordinateArray[5].length() > 15:
-		$UserModel/RShoulder15.points = 	[coordinateArray[1],coordinateArray[5]]
-	if 	coordinateArray[6].length() > 15:
-		$UserModel/RArm56.points = 			[coordinateArray[5],coordinateArray[6]]
-	if 	coordinateArray[7].length() > 15:
-		$UserModel/RHand67.points = 		[coordinateArray[6],coordinateArray[7]]
-	if 	coordinateArray[8].length() > 15:
-		$UserModel/Torso18.points = 		[coordinateArray[1],coordinateArray[8]]
-	if 	coordinateArray[9].length() > 15:
-		$UserModel/LHip89.points =		 	[coordinateArray[8],coordinateArray[9]]
-	if 	coordinateArray[10].length() > 15:
-		$UserModel/LThigh910.points =		[coordinateArray[9],coordinateArray[10]]
-	if 	coordinateArray[11].length() > 15:
-		$UserModel/LLeg1011.points =	[coordinateArray[10],coordinateArray[11]]
-	if 	coordinateArray[12].length() > 15:
-		$UserModel/RHip812.points =			[coordinateArray[8],coordinateArray[12]]
-	if 	coordinateArray[13].length() > 15:
-		$UserModel/RThigh1213.points =		[coordinateArray[12],coordinateArray[13]]
-	if 	coordinateArray[14].length() > 15:
-		$UserModel/RLeg1314.points =	[coordinateArray[13],coordinateArray[14]]
-	if 	coordinateArray[15].length() > 15:
-		$UserModel/LHead015.points =		[coordinateArray[0],coordinateArray[15]]
-	if 	coordinateArray[16].length() > 15:
-		$UserModel/RHead016.points =		[coordinateArray[0],coordinateArray[16]]
-	if 	coordinateArray[17].length() > 15:
-		$UserModel/LCheek1517.points =		[coordinateArray[15],coordinateArray[17]]
-	if 	coordinateArray[18].length() > 15:
-		$UserModel/RCheek1618.points =		[coordinateArray[16],coordinateArray[18]]
-	"""
 
 func mapRightCoordinates(coordinateArray : PackedVector2Array) -> void:
 	#print(coordinateArray)
@@ -679,3 +650,76 @@ func _input(event):
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN: 
 			if $Camera2D2.position.y <= 1380:
 				$Camera2D2.position.y += SCROLL_SPEED
+
+func _updateThumbnail(value: int, left : bool) -> void:
+	if left:
+		var tempDecimal: int = floor(log(value+1)/ log(10))
+		$VideoTuning/Panel/TextureRect.texture = loadImage(file_path_left + "images/", file_name_left, value, decimal)
+	else:
+		var tempDecimalRight: int = floor(log(value+1)/ log(10))
+		$VideoTuning/Panel4/TextureRect.texture = loadImage(file_path_right + "images/", file_name_right, value, decimalRight)
+
+func _on_StT_h_slider_value_changed(value: float) -> void:
+	fileNum = floor(value * fileMax)
+	decimal = floor(log(fileNum+1)/ log(10))
+	_updateThumbnail(fileNum, true)
+
+
+func _on_EtT_h_slider_value_changed(value: float) -> void:
+	fileNumRight = floor(value * fileMax)
+	decimalRight = floor(log(fileNumRight+1)/ log(10))
+	_updateThumbnail(fileNumRight, false)
+
+
+func _on_RT_h_slider_value_changed(value: float) -> void:
+	pass # Replace with function body.
+
+
+func _on_StS_h_slider_value_changed(value: float) -> void:
+	endFileLeft = floor(value * fileMax)
+	_updateThumbnail(endFileLeft, true)
+
+
+func _on_EtS_h_slider_value_changed(value: float) -> void:
+	endFileRight = floor(value * fileMax)
+	_updateThumbnail(endFileRight, true)
+
+
+func _on_RS_h_slider_value_changed(value: float) -> void:
+	pass # Replace with function body.
+
+
+func _on_Teacher_Select_button_down() -> void:
+	$StartMenu/FileDialog.popup_file_dialog()
+	teacherSelection = true
+
+
+func _on_Student_Select_button_down() -> void:
+	teacherSelection = false
+	$StartMenu/FileDialog.popup_file_dialog()
+
+
+func _on_Continue_1_button_down() -> void:
+	menu_state = 1
+	$StartMenu.visible = false
+	$Loading.visible = true
+	$LoadTimer.start()
+
+
+func _on_Continue_2_button_down() -> void:
+	menu_state = 3
+	$VideoTuning.visible = false
+	$UI.visible = true
+
+func _on_load_timer_timeout() -> void:
+	menu_state = 2
+	$Loading.visible = false
+	$VideoTuning.visible = true
+
+func _on_file_dialog_file_selected(path: String) -> void:
+	if teacherSelection:
+		file_name_left = $StartMenu/FileDialog.current_file 
+		$StartMenu/Panel/TextureRect.texture = $StartMenu/FileDialog.file_thumbnail
+	else:
+		file_name_right = $StartMenu/FileDialog.current_file 
+		$StartMenu/Panel4/TextureRect.texture = $StartMenu/FileDialog.file_thumbnail
