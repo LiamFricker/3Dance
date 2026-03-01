@@ -1,21 +1,26 @@
 extends Node2D
 
-@export var fileNum: int = 0#180
-@onready var decimal: int = floor(log(fileNum+1)/ log(10))
-@export var fileNumRight: int = 0#100
-@onready var decimalRight: int = floor(log(fileNumRight+1)/ log(10))
+@export var fileNum: int = 1#180
+@onready var decimal: int = floor(log(fileNum)/ log(10))
+@export var fileNumRight: int = 1#100
+@onready var decimalRight: int = floor(log(fileNumRight)/ log(10))
 @export var endFileLeft : int = 0
 @export var endFileRight : int = 0
 var deltaNum: int = 1
-var fileMax: int = 763
+var fileMaxLeft: int = 763
+var fileMaxRight: int = 977
 
 #0 Start, 1 Loading, 2 VideoTuning, 3 UI
-var menu_state = 0
+@export var menu_state = 0
 var teacherSelection : bool = true
 var file_path_left = "../HH1_" #"../Teacher_"
 var file_name_left = "HH1_"
 var file_path_right = "../BadHH1_" #"../Student_" 
 var file_name_right = "BadHH1_"
+var leftRotation = 0
+var rightRotation = 0
+var curFileLeft = 0
+var curFileRight = 0
 
 const strLength: int = 11
 var parseStr : String = "00000000000"
@@ -119,14 +124,28 @@ func _ready() -> void:
 		print("Error opening file: ", jpgName)
 	return
 	"""
+	#$UI/Panel3/Advice.text = "Generating...\n\n\n\n\n"
 	tempImage = Image.load_from_file("res://icon.svg")
 	tempImage2 = Image.load_from_file("res://icon.svg")
+	$Misc/Node2D/Skeleton2D/hip.rotation_degrees = -15.7
+	$Misc/Node2D/Skeleton2D/hip/chest.rotation_degrees = 9.4
+	$Misc/Node2D/Skeleton2D/hip/chest/head.rotation_degrees = 4.1
+	$Misc/Node2D/Skeleton2D/hip/chest/arm_right.rotation_degrees = -122.9
+	$Misc/Node2D/Skeleton2D/hip/chest/arm_right/hand_right.rotation_degrees = -93.8
+	$Misc/Node2D/Skeleton2D/hip/chest/arm_left.rotation_degrees = 6.1
+	$Misc/Node2D/Skeleton2D/hip/chest/arm_left/hand_left.rotation_degrees = 0
+	$Misc/Node2D/Skeleton2D/hip/leg_right.rotation_degrees = -1.7
+	$Misc/Node2D/Skeleton2D/hip/leg_right/calf_right.rotation_degrees = 0
+	$Misc/Node2D/Skeleton2D/hip/leg_right/calf_right/foot_right.rotation_degrees = 8.8
+	$Misc/Node2D/Skeleton2D/hip/leg_left.rotation_degrees = 24.2
+	$Misc/Node2D/Skeleton2D/hip/leg_left/calf_left.rotation_degrees = -16.7
+	$Misc/Node2D/Skeleton2D/hip/leg_left/calf_left/foot_left.rotation_degrees = 20.2
 	#NOTprocess()
 
 func _process(delta) -> void:
 	if menu_state == 3:
 		timerCheck += 1
-		if timerCheck % slowness == 0:
+		if true:#timerCheck % slowness == 0:
 			if processTrack < totalDuration:
 				if NOTprocess(delta):
 					processTrack += deltaNum
@@ -134,10 +153,11 @@ func _process(delta) -> void:
 				
 
 func _on_button_button_down() -> void:
+	return
 	if not outOfFiles:
 		$UI/Panel/TextureRect.texture = loadImage(file_path_left + "images/", file_name_left, fileNum, decimal)
 		#$UI/Panel2/TextureRect.texture = loadImage("../GoodHH1_images/", "GoodHH1_", fileNumRight, decimalRight)
-		$UI/Panel2/TextureRect.texture = loadImage(file_path_right + "images/", file_name_right, fileNumRight, decimalRight)
+		$UI/Panel4/TextureRect.texture = loadImage(file_path_right + "images/", file_name_right, fileNumRight, decimalRight, false)
 		
 		#$UI/Panel/TextureRect.texture = loadImage("../Demo1_images/", "Yoga1_", fileNum, decimal)
 		#$Sprite2D2.texture = loadImage("../Good1_images/", "GoodYoga1_", fileNumRight, decimalRight)
@@ -216,7 +236,7 @@ func _chooseAdvice() -> void:
 	
 	
 
-func loadImage(stringcase : String, stringstr : String, fN = fileNum, dec = decimal) -> ImageTexture:
+func loadImage(stringcase : String, stringstr : String, fN = fileNum, dec = decimal, left = true) -> ImageTexture:
 	var jpgName : String = stringcase + stringstr + parseStr.substr(0, strLength - dec) + str(fN) + "_rendered.jpg"
 	var jpg = FileAccess.open(jpgName, FileAccess.READ_WRITE)
 	
@@ -230,12 +250,30 @@ func loadImage(stringcase : String, stringstr : String, fN = fileNum, dec = deci
 	
 	var buffer = jpg.get_buffer(jpg.get_length()) # Read entire file into a PackedByteArray
 	
+	
 	var tempError = tempImage.load_jpg_from_buffer(buffer)
 	if tempError != OK:
 		print("Temperror ", tempError)	
 		return null
 	#"""
 	# + stringstr2 
+	
+	if left:
+		match leftRotation:
+			90:
+				tempImage.rotate_90(0)
+			180:
+				tempImage.rotate_180()
+			270:
+				tempImage.rotate_90(1)
+	else:
+		match rightRotation:
+			90:
+				tempImage.rotate_90(0)
+			180:
+				tempImage.rotate_180()
+			270:
+				tempImage.rotate_90(1)
 	
 	jpg.close()
 	return ImageTexture.create_from_image(tempImage)
@@ -628,11 +666,11 @@ func _pointsToLength(coordinateArray : PackedVector2Array):
 	else:
 		avgSizeMult /= limbsThatWork
 	#print(avgSizeMult)
-	$Node2D/Skeleton2D/hip.scale = Vector2(avgSizeMult,avgSizeMult)
+	#$Node2D/Skeleton2D/hip.scale = Vector2(avgSizeMult,avgSizeMult)
 	
-	if hipNeckPos != Vector2.ZERO:
+	#if hipNeckPos != Vector2.ZERO:
 		#print(0.45*hipNeckPos)
-		$Node2D/Skeleton2D/hip.position = Vector2(0.45,0.45)*hipNeckPos + Vector2(-425,15) #- Vector2(120,25)
+		#$Node2D/Skeleton2D/hip.psosition = Vector2(0.45,0.45)*hipNeckPos + Vector2(-425,15) #- Vector2(120,25)
 		
 
 func _input(event):
@@ -653,40 +691,46 @@ func _input(event):
 
 func _updateThumbnail(value: int, left : bool) -> void:
 	if left:
-		var tempDecimal: int = floor(log(value+1)/ log(10))
-		$VideoTuning/Panel/TextureRect.texture = loadImage(file_path_left + "images/", file_name_left, value, decimal)
+		var tempDecimal: int = floor(log(value)/ log(10))
+		$VideoTuning/Panel/TextureRect.texture = loadImage(file_path_left + "images/", file_name_left, value, tempDecimal)
 	else:
-		var tempDecimalRight: int = floor(log(value+1)/ log(10))
-		$VideoTuning/Panel4/TextureRect.texture = loadImage(file_path_right + "images/", file_name_right, value, decimalRight)
+		var tempDecimalRight: int = floor(log(value)/ log(10))
+		$VideoTuning/Panel4/TextureRect.texture = loadImage(file_path_right + "images/", file_name_right, value, tempDecimalRight, false)
 
 func _on_StT_h_slider_value_changed(value: float) -> void:
-	fileNum = floor(value * fileMax)
-	decimal = floor(log(fileNum+1)/ log(10))
+	fileNum = floor(value * fileMaxLeft / 100)
+	decimal = floor(log(fileNum)/ log(10))
+	curFileLeft = fileNum
 	_updateThumbnail(fileNum, true)
 
 
 func _on_EtT_h_slider_value_changed(value: float) -> void:
-	fileNumRight = floor(value * fileMax)
-	decimalRight = floor(log(fileNumRight+1)/ log(10))
-	_updateThumbnail(fileNumRight, false)
-
-
-func _on_RT_h_slider_value_changed(value: float) -> void:
-	pass # Replace with function body.
-
-
-func _on_StS_h_slider_value_changed(value: float) -> void:
-	endFileLeft = floor(value * fileMax)
+	endFileLeft = floor(value * fileMaxLeft / 100)
+	curFileLeft = endFileLeft
 	_updateThumbnail(endFileLeft, true)
 
 
+func _on_RT_h_slider_value_changed(value: float) -> void:
+	leftRotation = int(value)
+	_updateThumbnail(curFileLeft, true)
+
+
+func _on_StS_h_slider_value_changed(value: float) -> void:
+	fileNumRight = floor(value * fileMaxRight / 100)
+	decimalRight = floor(log(fileNumRight)/ log(10))
+	curFileRight = fileNumRight
+	_updateThumbnail(fileNumRight, false)
+
+
 func _on_EtS_h_slider_value_changed(value: float) -> void:
-	endFileRight = floor(value * fileMax)
-	_updateThumbnail(endFileRight, true)
+	endFileRight = floor(value * fileMaxRight / 100)
+	curFileRight = endFileRight
+	_updateThumbnail(endFileRight, false)
 
 
 func _on_RS_h_slider_value_changed(value: float) -> void:
-	pass # Replace with function body.
+	rightRotation = int(value)
+	_updateThumbnail(curFileRight, false)
 
 
 func _on_Teacher_Select_button_down() -> void:
@@ -710,16 +754,21 @@ func _on_Continue_2_button_down() -> void:
 	menu_state = 3
 	$VideoTuning.visible = false
 	$UI.visible = true
+	$Timer.start()
 
 func _on_load_timer_timeout() -> void:
 	menu_state = 2
 	$Loading.visible = false
 	$VideoTuning.visible = true
+	_on_StT_h_slider_value_changed(1)
+	_on_StS_h_slider_value_changed(1)
 
 func _on_file_dialog_file_selected(path: String) -> void:
 	if teacherSelection:
-		file_name_left = $StartMenu/FileDialog.current_file 
-		$StartMenu/Panel/TextureRect.texture = $StartMenu/FileDialog.file_thumbnail
+		#file_name_left = $StartMenu/FileDialog.current_file 
+		#$StartMenu/Panel/TextureRect.texture = $StartMenu/FileDialog.file_thumbnail
+		$StartMenu/Panel/Label.text = "Currently Selected File:\n" + $StartMenu/FileDialog.current_file
 	else:
-		file_name_right = $StartMenu/FileDialog.current_file 
-		$StartMenu/Panel4/TextureRect.texture = $StartMenu/FileDialog.file_thumbnail
+		#file_name_right = $StartMenu/FileDialog.current_file 
+		#$StartMenu/Panel4/TextureRect.texture = $StartMenu/FileDialog.file_thumbnail
+		$StartMenu/Panel4/Label.text = "Currently Selected File:\n" + $StartMenu/FileDialog.current_file
