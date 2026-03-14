@@ -197,8 +197,8 @@ func _on_button_button_down() -> void:
 			var tempFileNum = fileNum+offset
 			var tempDec = 0
 			if tempFileNum >= 10:
-				tempDec = floor(log(fileNum)/ log(10))
-			$UI3/Panel5/TextureRect.texture = loadImage(file_path_left + "images/", file_name_left, tempFileNum, decimal)
+				tempDec = floor(log(tempFileNum)/ log(10))
+			$UI3/Panel5/TextureRect.texture = loadImage(file_path_left + "images/", file_name_left, tempFileNum, tempDec)
 		else:
 			$UI/Panel5/TextureRect.texture = loadImage(file_path_left + "images/", file_name_left, fileNum, decimal)
 			#$UI/Panel2/TextureRect.texture = loadImage("../GoodHH1_images/", "GoodHH1_", fileNumRight, decimalRight)

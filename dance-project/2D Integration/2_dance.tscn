@@ -158,7 +158,7 @@ script = ExtResource("1_ocyea")
 menu_state = 3
 strictness = 0.6
 totalDuration = 100000.0
-offset = 25
+offset = 20
 
 [node name="Node2D2" type="Node2D" parent="." unique_id=166028784]
 visible = false
@@ -436,7 +436,7 @@ rest = Transform2D(1, 0, 0, 1, 0, -41)
 [node name="head" type="Bone2D" parent="Node2D/Skeleton2D/hip/chest" unique_id=1843878784]
 position = Vector2(0, -63)
 rotation = -0.05410522
-scale = Vector2(0.9999996, 0.9999996)
+scale = Vector2(0.99999946, 0.99999946)
 rest = Transform2D(1, 0, 0, 1, 0, -63)
 auto_calculate_length_and_angle = false
 length = 16.0
@@ -450,7 +450,7 @@ rest = Transform2D(1, 0, 0, 1, 43, -47)
 [node name="hand_right" type="Bone2D" parent="Node2D/Skeleton2D/hip/chest/arm_right" unique_id=663478430]
 position = Vector2(0, 37)
 rotation = -0.15184365
-scale = Vector2(0.9999994, 0.9999994)
+scale = Vector2(0.9999993, 0.9999993)
 rest = Transform2D(1, 0, 0, 1, 0, 37)
 auto_calculate_length_and_angle = false
 length = 34.4
@@ -495,7 +495,7 @@ rest = Transform2D(1, 0, 0, 1, -15, 7)
 [node name="calf_left" type="Bone2D" parent="Node2D/Skeleton2D/hip/leg_left" unique_id=495148158]
 position = Vector2(-1, 42)
 rotation = -0.0017453292
-scale = Vector2(0.99999964, 0.99999964)
+scale = Vector2(0.9999995, 0.9999995)
 rest = Transform2D(1, 0, 0, 1, -1, 42)
 
 [node name="foot_left" type="Bone2D" parent="Node2D/Skeleton2D/hip/leg_left/calf_left" unique_id=1816720983]
@@ -876,6 +876,7 @@ wait_time = 5.0
 one_shot = true
 
 [node name="UI" type="Control" parent="." unique_id=961460528]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
@@ -2076,8 +2077,8 @@ rest = Transform2D(1, 0, 0, 1, 0, -41)
 
 [node name="head" type="Bone2D" parent="UI3/Node2D/Skeleton2D/hip/chest" unique_id=975030785]
 position = Vector2(0, -63)
-rotation = -0.054105215
-scale = Vector2(0.99999964, 0.99999964)
+rotation = -0.05410522
+scale = Vector2(0.9999995, 0.9999995)
 rest = Transform2D(1, 0, 0, 1, 0, -63)
 auto_calculate_length_and_angle = false
 length = 16.0
@@ -2133,7 +2134,7 @@ rest = Transform2D(1, 0, 0, 1, -15, 7)
 [node name="calf_left" type="Bone2D" parent="UI3/Node2D/Skeleton2D/hip/leg_left" unique_id=2050094377]
 position = Vector2(-1, 42)
 rotation = -0.0017453292
-scale = Vector2(0.9999997, 0.9999997)
+scale = Vector2(0.9999996, 0.9999996)
 rest = Transform2D(1, 0, 0, 1, -1, 42)
 
 [node name="foot_left" type="Bone2D" parent="UI3/Node2D/Skeleton2D/hip/leg_left/calf_left" unique_id=502555274]
@@ -2428,7 +2429,6 @@ color = Color(0, 0.2, 0.5254902, 1)
 polygon = PackedVector2Array(800.7693, 766.92316, 816.1538, 743.07697, 786.1538, 743.07697)
 
 [node name="StartMenu" type="Control" parent="." unique_id=1793200191]
-visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0

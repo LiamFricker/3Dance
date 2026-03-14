@@ -1,5 +1,6 @@
 *.ogv
 *_images/
+*_json/
 *1_json/
 *2_json/
 *3_json/
