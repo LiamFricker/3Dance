@@ -155,7 +155,7 @@ corner_radius_bottom_left = 6
 
 [node name="2Dance" type="Node2D" unique_id=526706599]
 script = ExtResource("1_ocyea")
-menu_state = 3
+realTimeTesting = false
 strictness = 0.6
 totalDuration = 100000.0
 offset = 20
@@ -436,7 +436,7 @@ rest = Transform2D(1, 0, 0, 1, 0, -41)
 [node name="head" type="Bone2D" parent="Node2D/Skeleton2D/hip/chest" unique_id=1843878784]
 position = Vector2(0, -63)
 rotation = -0.05410522
-scale = Vector2(0.99999946, 0.99999946)
+scale = Vector2(0.9999994, 0.9999994)
 rest = Transform2D(1, 0, 0, 1, 0, -63)
 auto_calculate_length_and_angle = false
 length = 16.0
@@ -450,7 +450,7 @@ rest = Transform2D(1, 0, 0, 1, 43, -47)
 [node name="hand_right" type="Bone2D" parent="Node2D/Skeleton2D/hip/chest/arm_right" unique_id=663478430]
 position = Vector2(0, 37)
 rotation = -0.15184365
-scale = Vector2(0.9999993, 0.9999993)
+scale = Vector2(0.9999992, 0.9999992)
 rest = Transform2D(1, 0, 0, 1, 0, 37)
 auto_calculate_length_and_angle = false
 length = 34.4
@@ -495,7 +495,7 @@ rest = Transform2D(1, 0, 0, 1, -15, 7)
 [node name="calf_left" type="Bone2D" parent="Node2D/Skeleton2D/hip/leg_left" unique_id=495148158]
 position = Vector2(-1, 42)
 rotation = -0.0017453292
-scale = Vector2(0.9999995, 0.9999995)
+scale = Vector2(0.99999946, 0.99999946)
 rest = Transform2D(1, 0, 0, 1, -1, 42)
 
 [node name="foot_left" type="Bone2D" parent="Node2D/Skeleton2D/hip/leg_left/calf_left" unique_id=1816720983]
@@ -2078,7 +2078,7 @@ rest = Transform2D(1, 0, 0, 1, 0, -41)
 [node name="head" type="Bone2D" parent="UI3/Node2D/Skeleton2D/hip/chest" unique_id=975030785]
 position = Vector2(0, -63)
 rotation = -0.05410522
-scale = Vector2(0.9999995, 0.9999995)
+scale = Vector2(0.99999946, 0.99999946)
 rest = Transform2D(1, 0, 0, 1, 0, -63)
 auto_calculate_length_and_angle = false
 length = 16.0
@@ -2134,7 +2134,7 @@ rest = Transform2D(1, 0, 0, 1, -15, 7)
 [node name="calf_left" type="Bone2D" parent="UI3/Node2D/Skeleton2D/hip/leg_left" unique_id=2050094377]
 position = Vector2(-1, 42)
 rotation = -0.0017453292
-scale = Vector2(0.9999996, 0.9999996)
+scale = Vector2(0.9999995, 0.9999995)
 rest = Transform2D(1, 0, 0, 1, -1, 42)
 
 [node name="foot_left" type="Bone2D" parent="UI3/Node2D/Skeleton2D/hip/leg_left/calf_left" unique_id=502555274]
@@ -2435,6 +2435,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="FileDialog" type="FileDialog" parent="StartMenu" unique_id=281767344]
+oversampling_override = 1.0
 title = "Open a File"
 file_mode = 0
 

@@ -951,12 +951,28 @@ func _on_file_dialog_file_selected(path: String) -> void:
 	if teacherSelection:
 		#file_name_left = $StartMenu/FileDialog.current_file 
 		#$StartMenu/Panel/TextureRect.texture = $StartMenu/FileDialog.file_thumbnail
-		$StartMenu/Panel/Label.text = "Currently Selected File:\n" + $StartMenu/FileDialog.current_file
+		var tempName = $StartMenu/FileDialog.current_file
+		var periodPos = tempName.rfind(".")
+		if periodPos == -1:
+			file_name_left = tempName
+			file_path_left = tempName
+		else:
+			file_name_left = tempName.substr(0, periodPos)
+			file_path_left = tempName
+		$StartMenu/Panel/Label.text = "Currently Selected File:\n" + tempName
 	else:
 		#file_name_right = $StartMenu/FileDialog.current_file 
 		#$StartMenu/Panel4/TextureRect.texture = $StartMenu/FileDialog.file_thumbnail
-		$StartMenu/Panel4/Label.text = "Currently Selected File:\n" + $StartMenu/FileDialog.current_file
-
+		var tempName = $StartMenu/FileDialog.current_file
+		var periodPos = tempName.rfind(".")
+		if periodPos == -1:
+			file_name_right = tempName
+			file_path_right = tempName
+		else:
+			file_name_right = tempName.substr(0, periodPos)
+			file_path_right = tempName
+		$StartMenu/Panel4/Label.text = "Currently Selected File:\n" + tempName
+		
 func _calcTimeStr(time : int) -> String:
 	time /= 30
 	var tempHour = floor(time / 60)
